@@ -1,0 +1,42 @@
+<!--
+  This template loads for the 'tab.friend-detail' state (app.js)
+  'friend' is a $scope variable created in the FriendsCtrl controller (controllers.js)
+  The FriendsCtrl pulls data from the Friends service (service.js)
+  The Friends service returns an array of friend data
+-->
+<ion-view view-title="{{pot.name}}">
+
+  <ion-nav-buttons side="right">
+    <button class="button" ng-click="addPotItem()">
+      add
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content class="padding">
+    <!--<img ng-src="{{pot.img}}" style="width: 64px; height: 64px">-->
+    <p>{{pot.description}}</p>
+    <p>Created from: {{pot.creator}} at {{pot.datetime}}</p>
+    <p>Changed from: {{pot.changer}} at {{pot.changedatetime}}</p>
+
+    <ion-list>
+      <ion-item class="item-icon-right" ng-repeat="item in pot.items" type="item-text-wrap">
+        <div class="list card">
+          <div class="item">
+            <h2>{{item.creator}}</h2>
+            <p>{{item.datetime}}</p>
+          </div>
+
+          <div class="item item-body">
+            <img class="full-image" src="{{item.data}}">
+            <p>{{item.description}}
+            </p>
+            <p>
+              <p class="subdued">{{item.value}}</a>
+              <p class="subdued">{{item.curr}}</a>
+            </p>
+          </div>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

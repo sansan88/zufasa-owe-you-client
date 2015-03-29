@@ -20,7 +20,17 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   });
 })
-
+/*
+.config(['$ionicAppProvider', function($ionicAppProvider) {
+  // Identify app
+  $ionicAppProvider.identify({
+    // The App ID for the server
+    app_id: '0a14bac5',
+    // The API key all services will use for this app
+    api_key: '6c29f5180fb3c03552961ef9d1dcc675b2b44328d7cd055f'
+  });
+}])
+*/
 .config(function($stateProvider, $urlRouterProvider) {
 
   // Ionic uses AngularUI Router which uses the concept of states
@@ -48,21 +58,42 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
-  .state('tab.chats', {
-      url: '/chats',
+//Pots
+  .state('tab.pots', {
+      url: '/pots',
       views: {
-        'tab-chats': {
-          templateUrl: 'templates/tab-chats.html',
-          controller: 'ChatsCtrl'
+        'tab-pots': {
+          templateUrl: 'templates/tab-pots.html',
+          controller: 'PotsCtrl'
         }
       }
     })
-    .state('tab.chat-detail', {
-      url: '/chats/:chatId',
+    .state('tab.pots-detail', {
+      url: '/pots/:potId',
       views: {
-        'tab-chats': {
-          templateUrl: 'templates/chat-detail.html',
-          controller: 'ChatDetailCtrl'
+        'tab-pots': {
+          templateUrl: 'templates/pot-detail.html',
+          controller: 'PotDetailCtrl'
+        }
+      }
+    })
+
+//Lists
+  .state('tab.lists', {
+      url: '/lists',
+      views: {
+        'tab-lists': {
+          templateUrl: 'templates/tab-lists.html',
+          controller: 'ListsCtrl'
+        }
+      }
+    })
+    .state('tab.lists-detail', {
+      url: '/lists/:listId',
+      views: {
+        'tab-lists': {
+          templateUrl: 'templates/list-detail.html',
+          controller: 'ListDetailCtrl'
         }
       }
     })

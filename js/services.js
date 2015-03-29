@@ -1,47 +1,134 @@
 angular.module('starter.services', [])
 
-.factory('Chats', function() {
+.factory('User', function() {
+
+  //Public Return Methods
+  return {
+    getUser: function(){
+
+      var user = {
+        username: window.localStorage.getItem("username"),
+        password: window.localStorage.getItem("password")
+      };
+      return user;
+    }
+  }
+})
+
+
+
+.factory('Lists', function() {
   // Might use a resource here that returns a JSON array
 
   // Some fake testing data
-  var chats = [{
+  var lists = [{
     id: 0,
-    name: 'Ben Sparrow',
-    lastText: 'You on your way?',
-    face: 'https://pbs.twimg.com/profile_images/514549811765211136/9SgAuHeY.png'
+    name: 'Einkaufen WG',
+    description: 'Migros Coop und so',
+    items: [{
+      id:0,
+      name: "Milch",
+      menge: "1",
+      einheit: "liter"
+    },
+    {
+      id: 1,
+      name: "Brot",
+      menge: "1",
+      einheit: "kg"
+    }
+
+    ]
   }, {
     id: 1,
-    name: 'Max Lynx',
-    lastText: 'Hey, it\'s me',
-    face: 'https://avatars3.githubusercontent.com/u/11214?v=3&s=460'
-  }, {
-    id: 2,
-    name: 'Andrew Jostlin',
-    lastText: 'Did you get the ice cream?',
-    face: 'https://pbs.twimg.com/profile_images/491274378181488640/Tti0fFVJ.jpeg'
-  }, {
-    id: 3,
-    name: 'Adam Bradleyson',
-    lastText: 'I should buy a boat',
-    face: 'https://pbs.twimg.com/profile_images/479090794058379264/84TKj_qa.jpeg'
-  }, {
-    id: 4,
-    name: 'Perry Governor',
-    lastText: 'Look at my mukluks!',
-    face: 'https://pbs.twimg.com/profile_images/491995398135767040/ie2Z_V6e.jpeg'
+    name: 'BBQ Party',
+    description: 'Sommerparty Yeah!',
+    items: [{
+
+    }]
   }];
 
   return {
     all: function() {
-      return chats;
+      return lists;
     },
-    remove: function(chat) {
-      chats.splice(chats.indexOf(chat), 1);
+    remove: function(list) {
+      lists.splice(lists.indexOf(list), 1);
     },
-    get: function(chatId) {
-      for (var i = 0; i < chats.length; i++) {
-        if (chats[i].id === parseInt(chatId)) {
-          return chats[i];
+    get: function(listId) {
+      for (var i = 0; i < lists.length; i++) {
+        if (lists[i].id === parseInt(listId)) {
+          return lists[i];
+        }
+      }
+      return null;
+    }
+  };
+})
+
+.factory('Pots', function() {
+  // Might use a resource here that returns a JSON array
+
+  // Some fake testing data
+  var pots = [{
+    id: 0,
+    name: 'WG Allgemein',
+    description: '',
+    creator: 1,
+    datetime: "",
+    archive: false,
+    changedatetime: "",
+    changer: 1,
+    img: "", //allgemeines bild
+    items: [{
+      id: 0,
+      value: "1.90",
+      curr: "CHF",
+      description: "",
+      creator: 1,
+      datetime: "",
+      archive: false,
+      changedatetime: "",
+      changer: 1,
+      data: "" // bild der Quittung
+    },{
+      id: 1,
+      value: "1.90",
+      curr: "CHF",
+      description: "",
+      creator: 1,
+      datetime: "",
+      archive: false,
+      changedatetime: "",
+      changer: 1,
+      data: ""
+    }]
+
+  }, {
+    id: 1,
+    name: 'WG Parties',
+    description: '',
+    creator: 1,
+    datetime: "",
+    archive: false,
+    changedatetime: "",
+    changer: 1,
+    img: "",
+    items: [{
+    }]
+  }];
+
+  return {
+    all: function() {
+      return pots;
+    },
+    remove: function(pot) {
+      pots.splice(pots.indexOf(pot), 1);
+    },
+    get: function(potId) {
+      for (var i = 0; i < pots.length; i++) {
+        if (pots[i].id === parseInt(potId)) {
+          return pots[i];
         }
       }
       return null;
