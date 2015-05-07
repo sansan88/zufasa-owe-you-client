@@ -1,11 +1,22 @@
 angular.module('starter.services', [])
+.factory('Firebase', function() {
+  var myDataRef = new Firebase('https://zoy-client.firebaseio.com/');
+  //Methods
+  return {
+    setItem2Pot: function(item) {
+      myDataRef.push(item);
+    },
+  }
+})
+
+//****************************************************************************
+//  USER
+//****************************************************************************
 
 .factory('User', function() {
-
   //Public Return Methods
   return {
-    getUser: function(){
-
+    getUser: function() {
       var user = {
         username: window.localStorage.getItem("username"),
         password: window.localStorage.getItem("password")
@@ -16,6 +27,9 @@ angular.module('starter.services', [])
 })
 
 
+//****************************************************************************
+//  LISTS
+//****************************************************************************
 
 .factory('Lists', function() {
   // Might use a resource here that returns a JSON array
@@ -26,17 +40,16 @@ angular.module('starter.services', [])
     name: 'Einkaufen WG',
     description: 'Migros Coop und so',
     items: [{
-      id:0,
-      name: "Milch",
-      menge: "1",
-      einheit: "liter"
-    },
-    {
-      id: 1,
-      name: "Brot",
-      menge: "1",
-      einheit: "kg"
-    }
+        id: 0,
+        name: "Milch",
+        menge: "1",
+        einheit: "liter"
+      }, {
+        id: 1,
+        name: "Brot",
+        menge: "1",
+        einheit: "kg"
+      }
 
     ]
   }, {
@@ -62,12 +75,24 @@ angular.module('starter.services', [])
         }
       }
       return null;
+    },
+    add: function(list) {
+      lists.push(list);
     }
   };
 })
+//****************************************************************************
+//  POTS
+//****************************************************************************
 
-.factory('Pots', function() {
-  // Might use a resource here that returns a JSON array
+.factory('Pots', ['$firebaseArray', function($firebaseArray){
+  var potsRef = new Firebase('https://zoy-client.firebaseio.com/pots');
+  return $firebaseArray(potsRef);
+
+
+
+}]  /*,function() {
+  // Might use a resource here that returns a JSON arrayb
 
   // Some fake testing data
   var pots = [{
@@ -91,7 +116,7 @@ angular.module('starter.services', [])
       changedatetime: "",
       changer: 1,
       data: "" // bild der Quittung
-    },{
+    }, {
       id: 1,
       value: "1.90",
       curr: "CHF",
@@ -114,8 +139,7 @@ angular.module('starter.services', [])
     changedatetime: "",
     changer: 1,
     img: "",
-    items: [{
-    }]
+    items: [{}]
   }];
 
   return {
@@ -132,6 +156,11 @@ angular.module('starter.services', [])
         }
       }
       return null;
+    },
+    add: function(pot) {
+      pots.push(pot);
     }
   };
-});
+
+}*/
+);
