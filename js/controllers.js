@@ -31,6 +31,7 @@ angular.module('starter.controllers', [])
         $scope.pots.$add({
           'name': $scope.modal.name,
           'description': $scope.modal.description
+          //'picture': $scope.modal.picture
         });
         $scope.modal.hide();
       } else {
@@ -87,15 +88,8 @@ angular.module('starter.controllers', [])
             console.log(base64data);
             $scope.modal.picture = base64data;
           }
-
         }
-
-
-
       };
-
-
-
     };
     //Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
@@ -121,7 +115,7 @@ angular.module('starter.controllers', [])
   })
 
 //****************************************************************************
-//  CONTROLLER
+//  CONTROLLER POTS DETAIL
 //****************************************************************************
 .controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots) {
   $scope.pot = Pots.get($stateParams.potId);
@@ -159,30 +153,56 @@ angular.module('starter.controllers', [])
     $scope.modal = null;
   });
 })
-
+//****************************************************************************
+//  LIST
+//****************************************************************************
 .controller('ListsCtrl', function($scope, $ionicModal, Lists) {
-  $scope.lists = Lists.all();
-  $scope.remove = function(list) {
-      Lists.remove(list);
+  $scope.lists = Lists;
+
+  //Pot Functions
+  $scope.addList = function() {
+    if ($scope.modal.description && $scope.modal.name) {
+      $scope.lists.$add({
+        'name': $scope.modal.name,
+        'description': $scope.modal.description
+        //'picture': $scope.modal.picture
+      });
+      $scope.modal.hide();
+    } else {
+      alert("keine werte eingegeben.");
     }
-    //****************************************************************************
-    //  MODAL FENSTER LIST
-    //****************************************************************************
-  $ionicModal.fromTemplateUrl('./templates/modal-list.html', {
+
+  };
+  $scope.archive = function(list) {
+    var listRef = new Firebase('https://zoy-client.firebaseio.com/lists/' + list.$id);
+    listRef.child('status').set('archived');
+    $ionicListDelegate.closeOptionButtons();
+  };
+  $scope.remove = function(list) {
+    var listRef = new Firebase('https://zoy-client.firebaseio.com/lists/' + list.$id);
+    listRef.child('status').set('removed');
+    listRef.remove();
+    $ionicListDelegate.closeOptionButtons();
+  };
+
+  $ionicModal.fromTemplateUrl('templates/modal-list.html', {
     scope: $scope,
     animation: 'slide-in-up',
     focusFirstInput: false,
-    backdropClickToClose: false
+    backdropClickToClose: false,
+    hardwareBackButtonClose: false,
+    focusFirstInput: true
   }).then(function(modal) {
     $scope.modal = modal;
   });
-
-  $scope.addList = function() {
-    $scope.modal.show();
-  }
   $scope.closeModal = function() {
     $scope.modal.hide();
   };
+  $scope.openModal = function() {
+    $scope.modal.show()
+  };
+
+
   //Cleanup the modal when we're done with it!
   $scope.$on('$destroy', function() {
     try {
@@ -192,21 +212,27 @@ angular.module('starter.controllers', [])
   // Execute action on hide modal
   $scope.$on('modal.hidden', function() {
     //init fields
-    $scope.modal = null;
+    //$scope.modal = null;
+    $scope.modal.name = null;
+    $scope.modal.description = null;
   });
   // Execute action on remove modal
   $scope.$on('modal.removed', function() {
     // Execute action
-    $scope.modal = null;
+    //$scope.modal = null;
+    $scope.modal.name = null;
+    $scope.modal.description = null;
   });
 })
 
+
+//****************************************************************************
+//  MODAL FENSTER LIST ITEM
+//****************************************************************************
 .controller('ListDetailCtrl', function($scope, $ionicModal, $stateParams, Lists) {
   $scope.list = Lists.get($stateParams.listId);
 
-  //****************************************************************************
-  //  MODAL FENSTER LIST
-  //****************************************************************************
+
   $ionicModal.fromTemplateUrl('./templates/modal-list-item.html', {
     scope: $scope,
     animation: 'slide-in-up',
@@ -242,7 +268,6 @@ angular.module('starter.controllers', [])
 })
 
 .controller('AccountCtrl', function($scope, User) {
-
   $scope.user = User.getUser();
   $scope.saveUser = function() {
     if ($scope.user.username !== null) {
