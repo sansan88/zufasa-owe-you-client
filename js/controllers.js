@@ -1,10 +1,10 @@
 angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope, Pots, Lists) {
+
     $scope.noLists = Lists.getAll().length;
     $scope.noListItems = 0;
     var lists = Lists.getAll();
-
     for(var i = 0; i < lists.length; i++){
       $scope.noListItems = $scope.noListItems + lists[i].items.length;
     }
@@ -12,7 +12,6 @@ angular.module('starter.controllers', [])
     $scope.noPots  = Pots.getAll().length;
     $scope.noPotItems = 0;
     var pots = Pots.getAll();
-
     for(var i = 0; i < pots.length; i++){
       $scope.noPotItems = $scope.noPotItems + pots[i].items.length;;
     }
