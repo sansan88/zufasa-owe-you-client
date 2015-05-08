@@ -12,7 +12,6 @@ angular.module('starter.services', [])
 //****************************************************************************
 //  USER
 //****************************************************************************
-
 .factory('User', function() {
   //Public Return Methods
   return {
@@ -32,13 +31,40 @@ angular.module('starter.services', [])
 //****************************************************************************
 .factory('Lists', ['$firebaseArray', function($firebaseArray) {
     var listsRef = new Firebase('https://zoy-client.firebaseio.com/lists');
-    return $firebaseArray(listsRef);
+    return {
+      getAll: function(){
+        $firebaseArray(listsRef);
+      }
+    }
   }])
 //****************************************************************************
 //  POTS
 //****************************************************************************
 .factory('Pots', ['$firebaseArray', function($firebaseArray) {
     var potsRef = new Firebase('https://zoy-client.firebaseio.com/pots');
-    return $firebaseArray(potsRef);
+    return {
+        getAll: function(){
+          $firebaseArray(potsRef);
+        },
+        getNew: function(){
+          $firebaseArray(potsRef);
+        },
+        add: function(pot){
+          $scope.pots.$add({
+            'name': pot.name,
+            'description': pot.description
+        },
+        setStatus: function(pot, status){
+          var potRef = new Firebase('https://zoy-client.firebaseio.com/pots/' + pot.$id);
+          potRef.child('status').set(status);
+
+          if (status === 'removed'){
+            potRef.remove();
+          }
+        },
+        remove: function(){
+
+        }
+    }
   }]
 );
