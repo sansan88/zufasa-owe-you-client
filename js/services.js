@@ -33,7 +33,7 @@ angular.module('starter.services', [])
     var listsRef = new Firebase('https://zoy-client.firebaseio.com/lists');
     return {
       getAll: function(){
-        $firebaseArray(listsRef);
+        return $firebaseArray(listsRef);
       }
     }
   }])
@@ -44,13 +44,13 @@ angular.module('starter.services', [])
     var potsRef = new Firebase('https://zoy-client.firebaseio.com/pots');
     return {
         getAll: function(){
-          $firebaseArray(potsRef);
+          return $firebaseArray(potsRef);
         },
         getNew: function(){
-          $firebaseArray(potsRef);
+          return $firebaseArray(potsRef);
         },
         add: function(pot){
-          $scope.pots.$add({
+          $firebaseArray(potsRef).$add({
             'name': pot.name,
             'description': pot.description
         })},

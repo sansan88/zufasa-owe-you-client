@@ -32,7 +32,7 @@ angular.module('starter.controllers', [])
     };
 
     //Pot Functions
-    $scope.addPot = function() { //Pots.add();
+    $scope.addPot = function(){ //Pots.add();
       if ($scope.modal.description && $scope.modal.name) {
         Pots.add($scope.modal);
         $scope.modal.hide();
@@ -117,7 +117,7 @@ angular.module('starter.controllers', [])
   //  LIST
   //****************************************************************************
   .controller('ListsCtrl', function($scope, $ionicModal, Lists) {
-    $scope.lists = Lists.getAll;
+    $scope.lists = Lists.getAll();
 
     //List Functions
     $scope.addList = function() {
