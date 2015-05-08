@@ -53,7 +53,7 @@ angular.module('starter.services', [])
           $scope.pots.$add({
             'name': pot.name,
             'description': pot.description
-        },
+        })},
         setStatus: function(pot, status){
           var potRef = new Firebase('https://zoy-client.firebaseio.com/pots/' + pot.$id);
           potRef.child('status').set(status);
