@@ -1,21 +1,21 @@
 angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope, Pots, Lists) {
-    /*$scope.noLists = Lists.all().length;
+    $scope.noLists = Lists.getAll().length;
     $scope.noListItems = 0;
-    var lists = Lists.all();
+    var lists = Lists.getAll();
 
     for(var i = 0; i < lists.length; i++){
       $scope.noListItems = $scope.noListItems + lists[i].items.length;
     }
 
-    $scope.noPots  = Pots.all().length;
+    $scope.noPots  = Pots.getAll().length;
     $scope.noPotItems = 0;
-    var pots = Pots.all();
+    var pots = Pots.getAll();
 
     for(var i = 0; i < pots.length; i++){
       $scope.noPotItems = $scope.noPotItems + pots[i].items.length;;
-    }*/
+    }
   })
   //****************************************************************************
   //  CONTROLLER POTS
@@ -25,8 +25,8 @@ angular.module('starter.controllers', [])
     $scope.pots = Pots.getAll();
 
     $scope.doRefresh = function(){
-      Pots.getNew().then(function(pots){
-        $scope.pots = pots.concat($scope.pots);
+      Pots.getNew().then(function(data){
+        $scope.pots = data.concat($scope.pots);
         $scope.$broadcast('scroll.refreshComplete');//Stop pull2refresh
       });
     };
