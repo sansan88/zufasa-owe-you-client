@@ -24,7 +24,7 @@ angular.module('starter.controllers', [])
     //Get Data from Store
     $scope.pots = Pots.getAll();
 
-    $scope.doRefresh: function(){
+    $scope.doRefresh = function(){
       Pots.getNew().then(function(pots){
         $scope.pots = pots.concat($scope.pots);
         $scope.$broadcast('scroll.refreshComplete');//Stop pull2refresh
