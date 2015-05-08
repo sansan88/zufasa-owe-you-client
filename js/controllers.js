@@ -34,12 +34,11 @@ angular.module('starter.controllers', [])
     //Pot Functions
     $scope.addPot = function() { //Pots.add();
       if ($scope.modal.description && $scope.modal.name) {
-        Pots.add(modal);
+        Pots.add($scope.modal);
         $scope.modal.hide();
       } else {
         alert("keine werte eingegeben.");
       }
-
     };
     $scope.archive = function(pot) {
       Pots.setStatus(pot, 'archived');
@@ -114,53 +113,13 @@ angular.module('starter.controllers', [])
       $scope.modal.description = null;
     });
   })
-
-//****************************************************************************
-//  CONTROLLER POTS DETAIL
-//****************************************************************************
-.controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots) {
-    $scope.pot = Pots.get($stateParams.potId);
-
-    //  Modal Item
-    $ionicModal.fromTemplateUrl('./templates/modal-pot-item.html', {
-      scope: $scope,
-      animation: 'slide-in-up',
-      focusFirstInput: false,
-      backdropClickToClose: false
-    }).then(function(modal) {
-      $scope.modal = modal;
-    });
-
-    $scope.addPotItem = function() {
-      $scope.modal.show();
-    }
-    $scope.closeModal = function() {
-      $scope.modal.hide();
-    };
-    //Cleanup the modal when we're done with it!
-    $scope.$on('$destroy', function() {
-      try {
-        $scope.modal.remove();
-      } catch (error) {}
-    });
-    // Execute action on hide modal
-    $scope.$on('modal.hidden', function() {
-      //init fields
-      $scope.modal = null;
-    });
-    // Execute action on remove modal
-    $scope.$on('modal.removed', function() {
-      // Execute action
-      $scope.modal = null;
-    });
-  })
   //****************************************************************************
   //  LIST
   //****************************************************************************
   .controller('ListsCtrl', function($scope, $ionicModal, Lists) {
     $scope.lists = Lists.getAll;
 
-    //Pot Functions
+    //List Functions
     $scope.addList = function() {
       if ($scope.modal.description && $scope.modal.name) {
         $scope.lists.$add({
@@ -228,9 +187,50 @@ angular.module('starter.controllers', [])
 
 
 //****************************************************************************
+//  CONTROLLER POTS DETAIL
+//****************************************************************************
+/*.controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots) {
+    $scope.pot = Pots.get($stateParams.potId);
+
+    //  Modal Item
+    $ionicModal.fromTemplateUrl('./templates/modal-pot-item.html', {
+      scope: $scope,
+      animation: 'slide-in-up',
+      focusFirstInput: false,
+      backdropClickToClose: false
+    }).then(function(modal) {
+      $scope.modal = modal;
+    });
+
+    $scope.addPotItem = function() {
+      $scope.modal.show();
+    }
+    $scope.closeModal = function() {
+      $scope.modal.hide();
+    };
+    //Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+      try {
+        $scope.modal.remove();
+      } catch (error) {}
+    });
+    // Execute action on hide modal
+    $scope.$on('modal.hidden', function() {
+      //init fields
+      $scope.modal = null;
+    });
+    // Execute action on remove modal
+    $scope.$on('modal.removed', function() {
+      // Execute action
+      $scope.modal = null;
+    });
+  })
+  */
+
+//****************************************************************************
 //  MODAL FENSTER LIST ITEM
 //****************************************************************************
-.controller('ListDetailCtrl', function($scope, $ionicModal, $stateParams, Lists) {
+/*.controller('ListDetailCtrl', function($scope, $ionicModal, $stateParams, Lists) {
   $scope.list = Lists.get($stateParams.listId);
 
 
@@ -267,7 +267,7 @@ angular.module('starter.controllers', [])
   });
 
 })
-
+*/
 .controller('AccountCtrl', function($scope, User) {
   $scope.user = User.getUser();
   $scope.saveUser = function() {
