@@ -19,26 +19,37 @@ angular.module('starter.controllers', [])
   //****************************************************************************
   //  CONTROLLER POTS
   //****************************************************************************
-  .controller('PotsCtrl', function($scope, $ionicModal, Pots, $firebaseAuth, $state , $ionicListDelegate) {
+  .controller('PotsCtrl', function($scope, $ionicModal, Pots, $firebaseAuth, $state, $ionicListDelegate) {
 
     var fbAuth = fb.getAuth();
-    if(fbAuth) {
-        /*var userReference = fb.child("users/" + fbAuth.uid);
-        var syncArray = $firebaseArray(userReference.child("pots"));
-        $scope.pots = syncArray;*/
-        $scope.pots = Pots.getAll(fbAuth.uid);
+    if (fbAuth) {
+      /*var userReference = fb.child("users/" + fbAuth.uid);
+      var syncArray = $firebaseArray(userReference.child("pots"));
+      $scope.pots = syncArray;*/
+      $scope.pots = Pots.getAll(fbAuth.uid);
+
     } else {
-        $state.go("tab.account");
+      alert("Please Login first");
+      $state.go("tab.account");
     }
 
     //Get Data from Store
-
-
     $scope.doRefresh = function() {
-      Pots.getNew(fbAuth.uid).then(function(data) {
+      var fbAuth = fb.getAuth();
+      if (fbAuth) {
+        var data = Pots.getNew(fbAuth.uid);
         $scope.pots = data.concat($scope.pots);
-        $scope.$broadcast('scroll.refreshComplete'); //Stop pull2refresh
-      });
+        $scope.$broadcast('scroll.refreshComplete');
+
+      } else {
+        $scope.$broadcast('scroll.refreshComplete');
+        alert("Please Login first");
+        $state.go("tab.account");
+      }
+    };
+
+    $scope.get = function(){
+      console.log("call get");
     };
 
     //Pot Functions
@@ -76,30 +87,37 @@ angular.module('starter.controllers', [])
       $scope.modal.hide();
     };
     $scope.openModal = function() {
-      $scope.modal.show();
+      var fbAuth = fb.getAuth();
+      if (fbAuth) {
 
-      //get Picture
-      var takePicture = document.querySelector("#take-picture");
-      takePicture.onchange = function(event) {
-        // Get a reference to the taken picture or chosen file
-        var files = event.target.files,
-          file;
-        if (files && files.length > 0) {
-          file = files[0];
-          $scope.modal.picture = window.URL.createObjectURL(file);
-          var URL = window.URL || window.webkitURL;
-          // Create ObjectURL
-          var imgURL = URL.createObjectURL(file);
+        $scope.modal.show();
 
-          var reader = new window.FileReader();
-          reader.readAsDataURL(imgURL);
-          reader.onloadend = function() {
-            var base64data = reader.result;
-            console.log(base64data);
-            $scope.modal.picture = base64data;
+        //get Picture
+        var takePicture = document.querySelector("#take-picture");
+        takePicture.onchange = function(event) {
+          // Get a reference to the taken picture or chosen file
+          var files = event.target.files,
+            file;
+          if (files && files.length > 0) {
+            file = files[0];
+            $scope.modal.picture = window.URL.createObjectURL(file);
+            var URL = window.URL || window.webkitURL;
+            // Create ObjectURL
+            var imgURL = URL.createObjectURL(file);
+
+            var reader = new window.FileReader();
+            reader.readAsDataURL(imgURL);
+            reader.onloadend = function() {
+              var base64data = reader.result;
+              console.log(base64data);
+              $scope.modal.picture = base64data;
+            }
           }
-        }
-      };
+        };
+      } else {
+        alert("Please Login first");
+        $state.go("tab.account");
+      }
     };
     //Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
@@ -369,23 +387,23 @@ angular.module('starter.controllers', [])
       Login User
     *********************************************/
   $scope.loginUser = function() {
-    fb.onAuth(authDataCallback);
-    fb.authWithPassword({
-      email: User.getEmail(),
-      password: User.getPassword()
-    }, function(error, authData) {
-      if (error) {
-        alert("Login Failed!", error);
-      } else {
-        alert("Authenticated successfully"); //with payload:", authData);
-        console.log(authData);
-        User.setAuthData(authData);
-      }
-    });
-  }
-  /*****************************************************
-    // Triggered on a button click, or some other target
-  *****************************************************/
+      fb.onAuth(authDataCallback);
+      fb.authWithPassword({
+        email: User.getEmail(),
+        password: User.getPassword()
+      }, function(error, authData) {
+        if (error) {
+          alert("Login Failed!", error);
+        } else {
+          alert("Authenticated successfully"); //with payload:", authData);
+          console.log(authData);
+          User.setAuthData(authData);
+        }
+      });
+    }
+    /*****************************************************
+      // Triggered on a button click, or some other target
+    *****************************************************/
   $scope.show = function() {
     // Show the action sheet
     var hideSheet = $ionicActionSheet.show({

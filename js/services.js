@@ -58,22 +58,15 @@ angular.module('starter.services', [])
         var userReference = fb.child("users/" + uid);
         var syncArray = $firebaseArray(userReference.child("pots"));
         return syncArray;
-
         //return $firebaseArray(potsRef);
       },
-      getNew: function() {
+      getNew: function(uid) {
         var userReference = fb.child("users/" + uid);
         var syncArray = $firebaseArray(userReference.child("pots"));
         return syncArray;
       },
-      get: function() {
-        alert("GET FUNCTIONC");
-        /*
-        var authData = JSON.parse(window.localStorage.getItem("authData"));
-        var userReference = fb.child("users/" + authData.uid);
-        var syncArray = $firebaseArray(userReference.child("pots"));
-        return syncArray;
-        */
+      get: function(uid) {
+        console.log("call get");
       },
       add: function(pot) {
         var authData = JSON.parse(window.localStorage.getItem("authData"));
