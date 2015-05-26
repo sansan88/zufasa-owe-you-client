@@ -11,10 +11,10 @@
     <ion-list>
       <ion-item class="item-remove-animate item-icon-right" ng-repeat="list in lists" type="item-text-wrap" href="#/tab/lists/{{list.id}}">
         <!--  item-avatar   <img ng-src="{{list.face}}">-->
+        
         <h2>{{list.name}}</h2>
-        <p>{{list.lastText}}</p>
+        <p>{{list.description}}</p>
         <i class="icon ion-chevron-right icon-accessory"></i>
-
 
         <ion-option-button class="button-energized" ng-click="archive(list)">
           Archive

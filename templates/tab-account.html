@@ -1,7 +1,14 @@
 <ion-view view-title="Account">
+  <ion-nav-buttons side="right">
+    <button class="button button-icon ion-more" ng-click="show()">
+      <!--add-->
+    </button>
+  </ion-nav-buttons>
+
+
   <ion-content>
 
-    <form ng-submit="saveUser()">
+    <form ng-submit="loginUser()">
       <div class="list">
         <label class="item item-input">
           <span class="input-label">Username</span>
@@ -17,10 +24,11 @@
       </div>
     </form>
 
+    <!--
     <ion-list>
-    <ion-toggle  ng-model="settings.enableFriends">
+    <ion-toggle  ng-model="settings.saveUser">
       Save Login data
     </ion-toggle>
-    </ion-list>
+  </ion-list>-->
   </ion-content>
 </ion-view>

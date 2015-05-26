@@ -21,6 +21,15 @@ angular.module('starter.services', [])
         password: window.localStorage.getItem("password")
       };
       return user;
+    },
+    getEmail : function() {
+      return window.localStorage.getItem("username");
+    },
+    getPassword : function() {
+      return window.localStorage.getItem("password");
+    },
+    setAuthData: function(data){
+      window.localStorage.setItem("authData", JSON.stringify(data) );
     }
   }
 })
@@ -48,6 +57,9 @@ angular.module('starter.services', [])
         },
         getNew: function(){
           return $firebaseArray(potsRef);
+        },
+        get: function(){
+
         },
         add: function(pot){
           $firebaseArray(potsRef).$add({

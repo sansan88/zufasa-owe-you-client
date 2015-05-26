@@ -5,14 +5,14 @@ angular.module('starter.controllers', [])
     $scope.noLists = Lists.getAll().length;
     $scope.noListItems = 0;
     var lists = Lists.getAll();
-    for(var i = 0; i < lists.length; i++){
+    for (var i = 0; i < lists.length; i++) {
       $scope.noListItems = $scope.noListItems + lists[i].items.length;
     }
 
-    $scope.noPots  = Pots.getAll().length;
+    $scope.noPots = Pots.getAll().length;
     $scope.noPotItems = 0;
     var pots = Pots.getAll();
-    for(var i = 0; i < pots.length; i++){
+    for (var i = 0; i < pots.length; i++) {
       $scope.noPotItems = $scope.noPotItems + pots[i].items.length;;
     }
   })
@@ -23,15 +23,15 @@ angular.module('starter.controllers', [])
     //Get Data from Store
     $scope.pots = Pots.getAll();
 
-    $scope.doRefresh = function(){
-      Pots.getNew().then(function(data){
+    $scope.doRefresh = function() {
+      Pots.getNew().then(function(data) {
         $scope.pots = data.concat($scope.pots);
-        $scope.$broadcast('scroll.refreshComplete');//Stop pull2refresh
+        $scope.$broadcast('scroll.refreshComplete'); //Stop pull2refresh
       });
     };
 
     //Pot Functions
-    $scope.addPot = function(){ //Pots.add();
+    $scope.addPot = function() { //Pots.add();
       if ($scope.modal.description && $scope.modal.name) {
         Pots.add($scope.modal);
         $scope.modal.hide();
@@ -188,43 +188,42 @@ angular.module('starter.controllers', [])
 //****************************************************************************
 //  CONTROLLER POTS DETAIL
 //****************************************************************************
-/*.controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots) {
-    $scope.pot = Pots.get($stateParams.potId);
+.controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots) {
+  $scope.pot = Pots.get($stateParams.potId);
 
-    //  Modal Item
-    $ionicModal.fromTemplateUrl('./templates/modal-pot-item.html', {
-      scope: $scope,
-      animation: 'slide-in-up',
-      focusFirstInput: false,
-      backdropClickToClose: false
-    }).then(function(modal) {
-      $scope.modal = modal;
-    });
+  //  Modal Item
+  $ionicModal.fromTemplateUrl('./templates/modal-pot-item.html', {
+    scope: $scope,
+    animation: 'slide-in-up',
+    focusFirstInput: false,
+    backdropClickToClose: false
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
 
-    $scope.addPotItem = function() {
-      $scope.modal.show();
-    }
-    $scope.closeModal = function() {
-      $scope.modal.hide();
-    };
-    //Cleanup the modal when we're done with it!
-    $scope.$on('$destroy', function() {
-      try {
-        $scope.modal.remove();
-      } catch (error) {}
-    });
-    // Execute action on hide modal
-    $scope.$on('modal.hidden', function() {
-      //init fields
-      $scope.modal = null;
-    });
-    // Execute action on remove modal
-    $scope.$on('modal.removed', function() {
-      // Execute action
-      $scope.modal = null;
-    });
-  })
-  */
+  $scope.addPotItem = function() {
+    $scope.modal.show();
+  }
+  $scope.closeModal = function() {
+    $scope.modal.hide();
+  };
+  //Cleanup the modal when we're done with it!
+  $scope.$on('$destroy', function() {
+    try {
+      $scope.modal.remove();
+    } catch (error) {}
+  });
+  // Execute action on hide modal
+  $scope.$on('modal.hidden', function() {
+    //init fields
+    $scope.modal = null;
+  });
+  // Execute action on remove modal
+  $scope.$on('modal.removed', function() {
+    // Execute action
+    $scope.modal = null;
+  });
+})
 
 //****************************************************************************
 //  MODAL FENSTER LIST ITEM
@@ -267,20 +266,95 @@ angular.module('starter.controllers', [])
 
 })
 */
-.controller('AccountCtrl', function($scope, User) {
+.controller('AccountCtrl', function($scope, User, $ionicActionSheet, $timeout) {
+
   $scope.user = User.getUser();
-  $scope.saveUser = function() {
-    if ($scope.user.username !== null) {
-      window.localStorage.setItem("username", $scope.user.username); //sollte auch in store..
-    }
-    if ($scope.user.password !== null) {
-      window.localStorage.setItem("password", $scope.user.password); //sollte auch in store..
-    }
+
+  $scope.changePW = function() {
+
   }
 
-  $scope.saveUser();
+  /*********************************************
+    RESET USERDATEN
+  *********************************************/
+  $scope.deleteUser = function() {
+      window.localStorage.setItem("username", "");
+      window.localStorage.setItem("password", "");
+      $scope.user.password = "";
+      $scope.user.username = "";
+      alert("Deleted Logindata");
+    }
+    /*********************************************
+      SAVE USER
+    *********************************************/
+  $scope.saveUser = function() {
+      if ($scope.user.username !== null) {
+        window.localStorage.setItem("username", $scope.user.username); //sollte auch in store..
+      }
+      if ($scope.user.password !== null) {
+        window.localStorage.setItem("password", $scope.user.password); //sollte auch in store..
+      }
+      alert("Saved Logindata");
+    }
+    /*********************************************
+      Login User
+    *********************************************/
+  $scope.loginUser = function() {
+    var ref = new Firebase("https://zoy-client.firebaseio.com");
+    ref.authWithPassword({
+      email: User.getEmail(),
+      password: User.getPassword()
+    }, function(error, authData) {
+      if (error) {
+        alert("Login Failed!", error);
+      } else {
+        alert("Authenticated successfully"); //with payload:", authData);
+        console.log(authData);
+        User.setAuthData(authData);
+      }
+    });
+  }
 
-  $scope.settings = {
-    enableFriends: true
-  };
+/*****************************************************
+  // Triggered on a button click, or some other target
+*****************************************************/
+  $scope.show = function() {
+    // Show the action sheet
+    var hideSheet = $ionicActionSheet.show({
+
+      titleText: 'Account settings',
+
+      buttons: [{
+        text: 'Save logindata'
+      }, {
+        text: 'Change password'
+      }],
+
+      destructiveText: 'Delete logindata',
+      destructiveButtonClicked: function() {
+        $scope.deleteUser();
+        return true;
+      },
+
+      cancelText: 'Cancel',
+      cancel: function() {
+        // add cancel code..
+      },
+      buttonClicked: function(index) {
+        if (index === 0) {
+          $scope.saveUser();
+        }
+        if (index === 1) {
+          $scope.changePW();
+        }
+        return true;
+      }
+    });
+
+    // For example's sake, hide the sheet after two seconds
+    $timeout(function() {
+      hideSheet();
+    }, 5000);
+  }
+
 });
