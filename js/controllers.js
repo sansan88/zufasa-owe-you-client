@@ -19,12 +19,23 @@ angular.module('starter.controllers', [])
   //****************************************************************************
   //  CONTROLLER POTS
   //****************************************************************************
-  .controller('PotsCtrl', function($scope, $ionicModal, Pots, $ionicListDelegate) {
+  .controller('PotsCtrl', function($scope, $ionicModal, Pots, $firebaseAuth, $state , $ionicListDelegate) {
+
+    var fbAuth = fb.getAuth();
+    if(fbAuth) {
+        /*var userReference = fb.child("users/" + fbAuth.uid);
+        var syncArray = $firebaseArray(userReference.child("pots"));
+        $scope.pots = syncArray;*/
+        $scope.pots = Pots.getAll(fbAuth.uid);
+    } else {
+        $state.go("tab.account");
+    }
+
     //Get Data from Store
-    $scope.pots = Pots.getAll();
+
 
     $scope.doRefresh = function() {
-      Pots.getNew().then(function(data) {
+      Pots.getNew(fbAuth.uid).then(function(data) {
         $scope.pots = data.concat($scope.pots);
         $scope.$broadcast('scroll.refreshComplete'); //Stop pull2refresh
       });
@@ -266,16 +277,74 @@ angular.module('starter.controllers', [])
 
 })
 */
-.controller('AccountCtrl', function($scope, User, $ionicActionSheet, $timeout) {
+.controller('AccountCtrl', function($scope, User, $ionicActionSheet, $timeout, $state, $firebaseAuth) {
+
+  var fbAuth = $firebaseAuth(fb);
 
   $scope.user = User.getUser();
 
-  $scope.changePW = function() {
+  // Create a callback which logs the current auth state
+  function authDataCallback(authData) {
+    if (authData) {
+      console.log("User " + authData.uid + " is logged in with " + authData.provider);
+    } else {
+      console.log("User is logged out");
+    }
+  }
 
+  $scope.changePW = function() {
+    var newPW = prompt("Set new password", "enter new password here");
+    fb.changePassword({
+      email: $scope.user.username,
+      oldPassword: $scope.user.password,
+      newPassword: newPW
+    }, function(error) {
+      if (error === null) {
+        console.log("Password changed successfully");
+        $scope.user.password = newPW;
+
+      } else {
+        console.log("Error changing password:", error);
+      }
+    });
+  }
+
+  $scope.changeEmail = function() {
+    var newEmail = prompt("Set new email", "enter new email here");
+    fb.changeEmail({
+      oldEmail: $scope.user.username,
+      newEmail: newEmail,
+      password: $scope.user.password
+    }, function(error) {
+      if (error === null) {
+        console.log("Email changed successfully");
+        $scope.user.username = newEmail;
+
+      } else {
+        console.log("Error changing email:", error);
+      }
+    });
+  }
+
+  $scope.resetPW = function() {
+    fb.resetPassword({
+      email: $scope.user.username
+    }, function(error) {
+      if (error === null) {
+        console.log("Password reset email sent successfully");
+      } else {
+        console.log("Error sending password reset email:", error);
+      }
+    });
+  }
+
+  $scope.logout = function() {
+    fb.unauth();
+    User.setAuthData(null);
   }
 
   /*********************************************
-    RESET USERDATEN
+    RESET USERDATEN(Lokal)
   *********************************************/
   $scope.deleteUser = function() {
       window.localStorage.setItem("username", "");
@@ -285,7 +354,7 @@ angular.module('starter.controllers', [])
       alert("Deleted Logindata");
     }
     /*********************************************
-      SAVE USER
+      SAVE USERDATEN (Lokal)
     *********************************************/
   $scope.saveUser = function() {
       if ($scope.user.username !== null) {
@@ -300,8 +369,8 @@ angular.module('starter.controllers', [])
       Login User
     *********************************************/
   $scope.loginUser = function() {
-    var ref = new Firebase("https://zoy-client.firebaseio.com");
-    ref.authWithPassword({
+    fb.onAuth(authDataCallback);
+    fb.authWithPassword({
       email: User.getEmail(),
       password: User.getPassword()
     }, function(error, authData) {
@@ -314,10 +383,9 @@ angular.module('starter.controllers', [])
       }
     });
   }
-
-/*****************************************************
-  // Triggered on a button click, or some other target
-*****************************************************/
+  /*****************************************************
+    // Triggered on a button click, or some other target
+  *****************************************************/
   $scope.show = function() {
     // Show the action sheet
     var hideSheet = $ionicActionSheet.show({
@@ -325,10 +393,16 @@ angular.module('starter.controllers', [])
       titleText: 'Account settings',
 
       buttons: [{
-        text: 'Save logindata'
-      }, {
-        text: 'Change password'
-      }],
+          text: 'Save logindata'
+        }, {
+          text: 'Change email'
+        }, {
+          text: 'Change password'
+        }, {
+          text: 'reset password'
+        }
+
+      ],
 
       destructiveText: 'Delete logindata',
       destructiveButtonClicked: function() {
@@ -345,7 +419,13 @@ angular.module('starter.controllers', [])
           $scope.saveUser();
         }
         if (index === 1) {
+          $scope.changeEmail();
+        }
+        if (index === 2) {
           $scope.changePW();
+        }
+        if (index === 3) {
+          $scope.resetPW();
         }
         return true;
       }

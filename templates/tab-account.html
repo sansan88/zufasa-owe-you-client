@@ -5,24 +5,27 @@
     </button>
   </ion-nav-buttons>
 
-
-  <ion-content>
-
-    <form ng-submit="loginUser()">
-      <div class="list">
-        <label class="item item-input">
-          <span class="input-label">Username</span>
-          <input type="text" name="username" ng-model="user.username" ng-model-instant>
-        </label>
-        <label class="item item-input">
-          <span class="input-label">Password</span>
-          <input type="password" name="password" ng-model="user.password" ng-model-instant>
-        </label>
-        <label class="item">
-          <button class="button button-block button-positive" type="submit">Log in</button>
-        </label>
-      </div>
-    </form>
+    <ion-content>
+       <div>
+           <div class="list list-inset">
+               <label class="item item-input">
+                   <input ng-model="user.username" type="text" placeholder="Username" />
+               </label>
+               <label class="item item-input">
+                   <input ng-model="user.password" type="password" placeholder="Password" />
+               </label>
+           </div>
+           <div class="padding-left padding-right">
+               <div class="button-bar">
+                   <a class="button button-balanced" ng-click="loginUser()">Login</a>
+                   <a class="button button-assertive" ng-click="logout()">Logout</a>
+               </div>
+               <br>
+               <div class="button-bar">
+                   <a class="button button-positive" ng-click="register()">Register</a>
+               </div>
+           </div>
+       </div>
 
     <!--
     <ion-list>

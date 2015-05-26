@@ -22,14 +22,14 @@ angular.module('starter.services', [])
       };
       return user;
     },
-    getEmail : function() {
+    getEmail: function() {
       return window.localStorage.getItem("username");
     },
-    getPassword : function() {
+    getPassword: function() {
       return window.localStorage.getItem("password");
     },
-    setAuthData: function(data){
-      window.localStorage.setItem("authData", JSON.stringify(data) );
+    setAuthData: function(data) {
+      window.localStorage.setItem("authData", JSON.stringify(data));
     }
   }
 })
@@ -41,42 +41,70 @@ angular.module('starter.services', [])
 .factory('Lists', ['$firebaseArray', function($firebaseArray) {
     var listsRef = new Firebase('https://zoy-client.firebaseio.com/lists');
     return {
-      getAll: function(){
+      getAll: function() {
         return $firebaseArray(listsRef);
       }
     }
   }])
-//****************************************************************************
-//  POTS
-//****************************************************************************
-.factory('Pots', ['$firebaseArray', function($firebaseArray) {
-    var potsRef = new Firebase('https://zoy-client.firebaseio.com/pots');
-    return {
-        getAll: function(){
-          return $firebaseArray(potsRef);
-        },
-        getNew: function(){
-          return $firebaseArray(potsRef);
-        },
-        get: function(){
+  //****************************************************************************
+  //  POTS
+  //****************************************************************************
+  .factory('Pots', ['$firebaseArray', function($firebaseArray) {
 
-        },
-        add: function(pot){
-          $firebaseArray(potsRef).$add({
+    //var potsRef = new Firebase('https://zoy-client.firebaseio.com/pots');
+
+    return {
+      getAll: function(uid) {
+        var userReference = fb.child("users/" + uid);
+        var syncArray = $firebaseArray(userReference.child("pots"));
+        return syncArray;
+
+        //return $firebaseArray(potsRef);
+      },
+      getNew: function() {
+        var userReference = fb.child("users/" + uid);
+        var syncArray = $firebaseArray(userReference.child("pots"));
+        return syncArray;
+      },
+      get: function() {
+        alert("GET FUNCTIONC");
+        /*
+        var authData = JSON.parse(window.localStorage.getItem("authData"));
+        var userReference = fb.child("users/" + authData.uid);
+        var syncArray = $firebaseArray(userReference.child("pots"));
+        return syncArray;
+        */
+      },
+      add: function(pot) {
+        var authData = JSON.parse(window.localStorage.getItem("authData"));
+        var userReference = fb.child("users/" + authData.uid);
+        var syncArray = $firebaseArray(userReference.child("pots"));
+        syncArray.$add({
+          'name': pot.name,
+          'description': pot.description
+        })
+
+        /*$firebaseArray(potsRef).$add({
             'name': pot.name,
             'description': pot.description
-        })},
-        setStatus: function(pot, status){
-          var potRef = new Firebase('https://zoy-client.firebaseio.com/pots/' + pot.$id);
-          potRef.child('status').set(status);
+        })*/
+      },
+      setStatus: function(pot, status) {
+        var authData = JSON.parse(window.localStorage.getItem("authData"));
+        var userReference = fb.child("users/" + authData.uid);
+        var syncArray = $firebaseArray(userReference.child("pots/" + pot.$id));
+        syncArray.child('status').set(status);
 
-          if (status === 'removed'){
-            potRef.remove();
-          }
-        },
-        remove: function(){
 
+        /*var potRef = new Firebase('https://zoy-client.firebaseio.com/pots/' + pot.$id);
+        potRef.child('status').set(status);*/
+
+        if (status === 'removed') {
+          potRef.remove();
         }
+      },
+      remove: function() {
+
+      }
     }
-  }]
-);
+  }]);
