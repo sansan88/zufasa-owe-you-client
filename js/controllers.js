@@ -19,7 +19,18 @@ angular.module('starter.controllers', [])
   //****************************************************************************
   //  CONTROLLER POTS
   //****************************************************************************
-  .controller('PotsCtrl', function($scope, $ionicModal, Pots, $firebaseAuth, $state, $ionicListDelegate) {
+  .controller('PotsCtrl', function($scope, $ionicModal, Pots, $firebaseAuth, $state, $ionicListDelegate, $ionicPopup) {
+
+    $scope.showAlert = function(title, template, logText) {
+      var alertPopup = $ionicPopup.alert({
+        title: title,
+        template: template
+      });
+      alertPopup.then(function(res) {
+        console.log(logText);
+      });
+    };
+
 
     var fbAuth = fb.getAuth();
     if (fbAuth) {
@@ -29,7 +40,11 @@ angular.module('starter.controllers', [])
       $scope.pots = Pots.getAll(fbAuth.uid);
 
     } else {
-      alert("Please Login first");
+      var title = 'Please Login first';
+      var template = '';
+      var logText = "Please Login first";
+      $scope.showAlert(title, template, logText);
+      //alert("Please Login first");
       $state.go("tab.account");
     }
 
@@ -43,14 +58,16 @@ angular.module('starter.controllers', [])
 
       } else {
         $scope.$broadcast('scroll.refreshComplete');
-        alert("Please Login first");
+        //alert("Please Login first");
+        var title = 'Please Login first';
+        var template = '';
+        var logText = "Please Login first";
+        $scope.showAlert(title, template, logText);
         $state.go("tab.account");
       }
     };
 
-    $scope.get = function(){
-      console.log("call get");
-    };
+
 
     //Pot Functions
     $scope.addPot = function() { //Pots.add();
@@ -58,7 +75,11 @@ angular.module('starter.controllers', [])
         Pots.add($scope.modal);
         $scope.modal.hide();
       } else {
-        alert("keine werte eingegeben.");
+        //alert("keine werte eingegeben.");
+        var title = 'No values provided';
+        var template = '';
+        var logText = "No values provided";
+        $scope.showAlert(title, template, logText);
       }
     };
     $scope.archive = function(pot) {
@@ -115,7 +136,13 @@ angular.module('starter.controllers', [])
           }
         };
       } else {
-        alert("Please Login first");
+        var title = 'Please Login first';
+        var template = '';
+        var logText = "Please Login first";
+        $scope.showAlert(title, template, logText);
+
+
+        //alert("Please Login first");
         $state.go("tab.account");
       }
     };
@@ -157,7 +184,11 @@ angular.module('starter.controllers', [])
         });
         $scope.modal.hide();
       } else {
-        alert("keine werte eingegeben.");
+        var title = 'No values provided';
+        var template = '';
+        var logText = "No values provided";
+        $scope.showAlert(title, template, logText);
+        //alert("keine werte eingegeben.");
       }
 
     };
@@ -295,10 +326,12 @@ angular.module('starter.controllers', [])
 
 })
 */
-.controller('AccountCtrl', function($scope, User, $ionicActionSheet, $timeout, $state, $firebaseAuth) {
+.controller('AccountCtrl', function($scope, User, $ionicActionSheet, $timeout, $state, $firebaseAuth, $ionicPopup) {
 
+  //Get Auth Object
   var fbAuth = $firebaseAuth(fb);
 
+  //Get User Data
   $scope.user = User.getUser();
 
   // Create a callback which logs the current auth state
@@ -310,6 +343,47 @@ angular.module('starter.controllers', [])
     }
   }
 
+  //Create Alert Popup
+  // An alert dialog
+  $scope.showAlert = function(title, template, logText) {
+    var alertPopup = $ionicPopup.alert({
+      title: title,
+      template: template
+    });
+    alertPopup.then(function(res) {
+      console.log(logText);
+    });
+  };
+
+
+  $scope.register = function() {
+    var newPW = prompt("Set new password", "enter new password here");
+    var newEmail = prompt("Set new email", "enter new email here");
+    fb.createUser({
+      email: newPW,
+      password: newEmail
+    }, function(error, userData) {
+      if (error) {
+        var title = 'Error creating user:';
+        var template = error;
+        var logText = "Error creating user:" + error;
+
+        $scope.showAlert(title, template, logText);
+
+      } else {
+        var title = 'Successfully created user account';
+        var template = '';
+        var logText = "Successfully created user account with uid:" + userData.uid;
+
+        $scope.showAlert(title, template, logText);
+        //console.log("Successfully created user account with uid:", userData.uid);
+
+        $scope.user.password = newPW;
+
+      }
+    });
+  }
+
   $scope.changePW = function() {
     var newPW = prompt("Set new password", "enter new password here");
     fb.changePassword({
@@ -318,11 +392,25 @@ angular.module('starter.controllers', [])
       newPassword: newPW
     }, function(error) {
       if (error === null) {
-        console.log("Password changed successfully");
-        $scope.user.password = newPW;
+        //console.log("Password changed successfully");
 
+        var title = 'Password changed successfully';
+        var template = '';
+        var logText = "Password changed successfully";
+
+        $scope.showAlert(title, template, logText);
+
+
+        $scope.user.password = newPW;
+        $scope.user.username = newEmail;
       } else {
-        console.log("Error changing password:", error);
+        var title = 'Error changing password';
+        var template = '';
+        var logText = "Error changing password" + error;
+
+        $scope.showAlert(title, template, logText);
+
+        //console.log("Error changing password:", error);
       }
     });
   }
@@ -335,11 +423,20 @@ angular.module('starter.controllers', [])
       password: $scope.user.password
     }, function(error) {
       if (error === null) {
-        console.log("Email changed successfully");
+        //console.log("Email changed successfully");
+        var title = 'Email changed successfully';
+        var template = '';
+        var logText = "Email changed successfully";
+
+        $scope.showAlert(title, template, logText);
         $scope.user.username = newEmail;
 
       } else {
-        console.log("Error changing email:", error);
+        //console.log("Error changing email:", error);
+        var title = 'Error changing email';
+        var template = '';
+        var logText = "Error changing email" + error;
+        $scope.showAlert(title, template, logText);
       }
     });
   }
@@ -349,9 +446,17 @@ angular.module('starter.controllers', [])
       email: $scope.user.username
     }, function(error) {
       if (error === null) {
-        console.log("Password reset email sent successfully");
+        //console.log("Password reset email sent successfully");
+        var title = 'Password reset email sent successfully';
+        var template = '';
+        var logText = "Password reset email sent successfully";
+        $scope.showAlert(title, template, logText);
       } else {
-        console.log("Error sending password reset email:", error);
+        var title = 'Error sending password reset email';
+        var template = '';
+        var logText = "Error sending password reset email" + error;
+        $scope.showAlert(title, template, logText);
+        //console.log("Error sending password reset email:", error);
       }
     });
   }
@@ -369,7 +474,12 @@ angular.module('starter.controllers', [])
       window.localStorage.setItem("password", "");
       $scope.user.password = "";
       $scope.user.username = "";
-      alert("Deleted Logindata");
+      //alert("Deleted Logindata");
+
+      var title = 'Deleted Logindata on device';
+      var template = '';
+      var logText = "Deleted Logindata on device";
+      $scope.showAlert(title, template, logText);
     }
     /*********************************************
       SAVE USERDATEN (Lokal)
@@ -381,7 +491,10 @@ angular.module('starter.controllers', [])
       if ($scope.user.password !== null) {
         window.localStorage.setItem("password", $scope.user.password); //sollte auch in store..
       }
-      alert("Saved Logindata");
+      var title = 'Saved Logindata on device';
+      var template = '';
+      var logText = "Saved Logindata on device";
+      $scope.showAlert(title, template, logText);
     }
     /*********************************************
       Login User
@@ -393,10 +506,19 @@ angular.module('starter.controllers', [])
         password: User.getPassword()
       }, function(error, authData) {
         if (error) {
-          alert("Login Failed!", error);
+          //          alert("Login Failed!", error);
+          var title = 'Login Failed';
+          var template = '';
+          var logText = "Login failed" + error;
+          $scope.showAlert(title, template, logText);
         } else {
-          alert("Authenticated successfully"); //with payload:", authData);
-          console.log(authData);
+          var title = 'Authenticated successfully';
+          var template = '';
+          var logText = "Authenticated successfully";
+          $scope.showAlert(title, template, logText);
+
+          //alert("Authenticated successfully"); //with payload:", authData);
+          //console.log(authData);
           User.setAuthData(authData);
         }
       });
