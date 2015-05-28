@@ -19,7 +19,7 @@ angular.module('starter.controllers', [])
   //****************************************************************************
   //  CONTROLLER POTS
   //****************************************************************************
-  .controller('PotsCtrl', function($scope, $ionicModal, Pots, $firebaseAuth, $firebaseArray , $state, $ionicListDelegate, $ionicPopup) {
+  .controller('PotsCtrl', function($scope, $ionicModal, Pots, $firebaseAuth, $firebaseArray, $state, $ionicListDelegate, $ionicPopup) {
 
     $scope.showAlert = function(title, template, logText) {
       var alertPopup = $ionicPopup.alert({
@@ -30,8 +30,6 @@ angular.module('starter.controllers', [])
         console.log(logText);
       });
     };
-
-
 
     var fbAuth = fb.getAuth();
     if (fbAuth) {
@@ -45,7 +43,6 @@ angular.module('starter.controllers', [])
       var template = '';
       var logText = "Please Login first";
       $scope.showAlert(title, template, logText);
-      //alert("Please Login first");
       $state.go("tab.account");
     }
 
@@ -59,7 +56,6 @@ angular.module('starter.controllers', [])
 
       } else {
         $scope.$broadcast('scroll.refreshComplete');
-        //alert("Please Login first");
         var title = 'Please Login first';
         var template = '';
         var logText = "Please Login first";
@@ -67,8 +63,6 @@ angular.module('starter.controllers', [])
         $state.go("tab.account");
       }
     };
-
-
 
     //Pot Functions
     $scope.addPot = function() { //Pots.add();
@@ -354,33 +348,63 @@ angular.module('starter.controllers', [])
     });
   };
 
-
   $scope.register = function() {
-    var newPW = prompt("Set new password", "enter new password here");
-    var newEmail = prompt("Set new email", "enter new email here");
-    fb.createUser({
-      email: newPW,
-      password: newEmail
-    }, function(error, userData) {
-      if (error) {
-        var title = 'Error creating user:';
-        var template = error;
-        var logText = "Error creating user:" + error;
+    //var newEmail = prompt("Set new email", "enter new email here");
+    //var newPW = prompt("Set new password", "enter new password here");
 
-        $scope.showAlert(title, template, logText);
-
-      } else {
-        var title = 'Successfully created user account';
-        var template = '';
-        var logText = "Successfully created user account with uid:" + userData.uid;
-
-        $scope.showAlert(title, template, logText);
-        //console.log("Successfully created user account with uid:", userData.uid);
-
-        $scope.user.password = newPW;
-
-      }
+    // An elaborate, custom popup
+    var myPopup = $ionicPopup.show({
+      template: '<label>Email:</label><input type="email" ng-model="register.email"><br><input type="password" ng-model="register.pw">',
+      title: 'Enter Username and Password',
+      subTitle: 'Please use normal things',
+      scope: $scope,
+      buttons: [{
+        text: 'Cancel'
+      }, {
+        text: '<b>Register new User</b>',
+        type: 'button-positive',
+        onTap: function(e) {
+          if (!$scope.register.pw && !$scope.register.email) {
+            //don't allow the user to close unless he enters wifi password
+            e.preventDefault();
+          } else {
+            return $scope.register;
+          }
+        }
+      }]
     });
+    myPopup.then(function(res) {
+
+      fb.createUser({
+        email: $scope.register.email,
+        password: $scope.register.pw
+      }, function(error, userData) {
+        if (error) {
+          var title = 'Error creating user:';
+          var template = error;
+          var logText = "Error creating user:" + error;
+
+          $scope.showAlert(title, template, logText);
+
+        } else {
+          var title = 'Successfully created user account';
+          var template = '';
+          var logText = "Successfully created user account with uid:" + userData.uid;
+
+          $scope.showAlert(title, template, logText);
+
+          $scope.user.password = $scope.register.pw;
+          $scope.user.username = $scope.register.email;
+          $scope.saveUser();
+        }
+      });
+
+    });
+    $timeout(function() {
+      myPopup.close(); //close the popup after 3 seconds for some reason
+    }, 30000);
+
+
   }
 
   $scope.changePW = function() {
@@ -538,7 +562,7 @@ angular.module('starter.controllers', [])
         }, {
           text: 'Change password'
         }, {
-          text: 'reset password'
+          text: 'Reset password'
         }
 
       ],

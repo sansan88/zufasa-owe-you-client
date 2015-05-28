@@ -75,12 +75,7 @@ angular.module('starter.services', [])
         syncArray.$add({
           'name': pot.name,
           'description': pot.description
-        })
-
-        /*$firebaseArray(potsRef).$add({
-            'name': pot.name,
-            'description': pot.description
-        })*/
+        });
       },
       setStatus: function(pot, status) {
         var authData = JSON.parse(window.localStorage.getItem("authData"));
