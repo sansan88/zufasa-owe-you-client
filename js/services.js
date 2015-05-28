@@ -97,7 +97,7 @@ angular.module('starter.services', [])
         potRef.child('status').set(status);*/
 
         if (status === 'removed') {
-          potRef.remove();
+          userReference.remove();
         }
       },
       remove: function() {
