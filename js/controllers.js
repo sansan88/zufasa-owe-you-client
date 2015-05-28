@@ -19,7 +19,7 @@ angular.module('starter.controllers', [])
   //****************************************************************************
   //  CONTROLLER POTS
   //****************************************************************************
-  .controller('PotsCtrl', function($scope, $ionicModal, Pots, $firebaseAuth, $state, $ionicListDelegate, $ionicPopup) {
+  .controller('PotsCtrl', function($scope, $ionicModal, Pots, $firebaseAuth, $firebaseArray , $state, $ionicListDelegate, $ionicPopup) {
 
     $scope.showAlert = function(title, template, logText) {
       var alertPopup = $ionicPopup.alert({
@@ -30,6 +30,7 @@ angular.module('starter.controllers', [])
         console.log(logText);
       });
     };
+
 
 
     var fbAuth = fb.getAuth();
@@ -84,12 +85,10 @@ angular.module('starter.controllers', [])
     };
     $scope.archive = function(pot) {
       Pots.setStatus(pot, 'archived');
-
       $ionicListDelegate.closeOptionButtons();
     };
     $scope.remove = function(pot) {
       Pots.setStatus(pot, 'removed');
-
       $ionicListDelegate.closeOptionButtons();
     };
 

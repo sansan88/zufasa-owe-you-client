@@ -84,10 +84,14 @@ angular.module('starter.services', [])
       },
       setStatus: function(pot, status) {
         var authData = JSON.parse(window.localStorage.getItem("authData"));
+        var userReference = fb.child("users/" + authData.uid + "/pots/" + pot.$id);
+        userReference.child('status').set(status);
+
+
+        /*var authData = JSON.parse(window.localStorage.getItem("authData"));
         var userReference = fb.child("users/" + authData.uid);
         var syncArray = $firebaseArray(userReference.child("pots/" + pot.$id));
-        syncArray.child('status').set(status);
-
+        syncArray.child('status').set(status);*/
 
         /*var potRef = new Firebase('https://zoy-client.firebaseio.com/pots/' + pot.$id);
         potRef.child('status').set(status);*/
