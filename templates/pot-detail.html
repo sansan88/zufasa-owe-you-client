@@ -13,7 +13,19 @@
   </ion-nav-buttons>
 
   <ion-content class="padding">
-    <p>Description: {{pot.description}}</p>
+    <div class="list">
+      <div class="item item-icon-left">
+        <i class="icon ion-document-text"></i>Description
+        <span class="item-note"> {{pot.description}}
+        </span>
+      </div>
+      <div class="item item-icon-left">
+        <i class="icon ion-information-circled"></i>Status
+        <span class="badge badge-assertive"> {{pot.status}}
+        </span>
+      </div>
+    </div>
+
     <!--<img ng-src="{{pot.img}}" style="width: 64px; height: 64px">-->
     <!--<p>Created from: {{pot.creator}} at {{pot.datetime}}</p>
     <p>Changed from: {{pot.changer}} at {{pot.changedatetime}}</p>-->
@@ -33,8 +45,8 @@
             </p>
             <p>
               <p class="subdued">{{item.value}}</a>
-              <p class="subdued">{{item.curr}}</a>
-            </p>
+                <p class="subdued">{{item.curr}}</a>
+                </p>
           </div>
         </div>
       </ion-item>

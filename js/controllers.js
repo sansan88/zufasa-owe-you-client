@@ -166,8 +166,9 @@ angular.module('starter.controllers', [])
 //  CONTROLLER POTS DETAIL
 //****************************************************************************
 .controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots, $firebaseArray, $firebaseObject) {
-
-  $scope.pot = $firebaseObject(Pots.get($stateParams.potId));
+  var uR = Pots.get($stateParams.potId);
+  var daten = $firebaseObject(uR);
+  $scope.pot = daten;
 
 
   //  Modal Item
