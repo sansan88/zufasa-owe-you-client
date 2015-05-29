@@ -7,7 +7,7 @@
 <ion-view view-title="{{pot.name}}">
 
   <ion-nav-buttons side="right">
-    <button class="button ion-plus" ng-click="addPotItem()">
+    <button class="button ion-plus" ng-click="openModal()">
       add Items
     </button>
   </ion-nav-buttons>
@@ -15,8 +15,18 @@
   <ion-content class="padding">
     <div class="list">
       <div class="item item-icon-left">
+        <i class="icon ion-clipboard"></i>Name
+        <span class="item-note"> {{pot.name}}
+        </span>
+      </div>
+      <div class="item item-icon-left">
         <i class="icon ion-document-text"></i>Description
         <span class="item-note"> {{pot.description}}
+        </span>
+      </div>
+      <div class="item item-icon-left">
+        <i class="icon ion-card"></i>Amount
+        <span class="item-note"> {{pot.amount}}
         </span>
       </div>
       <div class="item item-icon-left">
@@ -35,18 +45,16 @@
       <ion-item class="item-icon-right" ng-repeat="item in pot.items" type="item-text-wrap">
         <div class="list card">
           <div class="item">
-            <h2>{{item.creator}}</h2>
-            <p>{{item.datetime}}</p>
+            <h2>{{item.name}}</h2>
+            <p>{{item.date}}</p>
           </div>
 
           <div class="item item-body">
-            <img class="full-image" src="{{item.data}}">
-            <p>{{item.description}}
-            </p>
-            <p>
-              <p class="subdued">{{item.value}}</a>
-                <p class="subdued">{{item.curr}}</a>
-                </p>
+            <!--<img class="full-image" src="{{item.data}}">-->
+            <p>{{item.description}}</p>
+            <p class="subdued">{{item.amount}}</p>
+                <!--<p class="subdued">{{item.curr}}</a>
+                </p>-->
           </div>
         </div>
       </ion-item>

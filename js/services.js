@@ -77,11 +77,21 @@ angular.module('starter.services', [])
       },
       add: function(pot) {
         var authData = JSON.parse(window.localStorage.getItem("authData"));
-        var userReference = fb.child("users/" + authData.uid);
-        var syncArray = $firebaseArray(userReference.child("pots"));
+        var uR = fb.child("users/" + authData.uid);
+        var syncArray = $firebaseArray(uR.child("pots"));
         syncArray.$add({
           'name': pot.name,
           'description': pot.description
+        });
+      },
+      addItem: function(pot) {
+        var authData = JSON.parse(window.localStorage.getItem("authData"));
+        var uR = fb.child("users/" + authData.uid);
+        var syncArray = $firebaseArray(uR.child("pots/" + pot.potId));
+        syncArray.$add({
+          'name': pot.name,
+          'description': pot.description,
+          'amount': pot.amount
         });
       },
       setStatus: function(pot, status) {

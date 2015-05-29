@@ -169,9 +169,12 @@ angular.module('starter.controllers', [])
   var uR = Pots.get($stateParams.potId);
   var daten = $firebaseObject(uR);
   $scope.pot = daten;
+  var items = $firebaseArray(uR);
+  $scope.items = items;
 
+  //$scope.pot.potId = $stateParams.potId;
 
-  //  Modal Item
+  //  Modal Pot Item
   $ionicModal.fromTemplateUrl('./templates/modal-pot-item.html', {
     scope: $scope,
     animation: 'slide-in-up',
@@ -180,8 +183,20 @@ angular.module('starter.controllers', [])
   }).then(function(modal) {
     $scope.modal = modal;
   });
-
   $scope.addPotItem = function() {
+    if ($scope.modal.description && $scope.modal.name && $scope.modal.amount) {
+      $scope.modal.potId = $scope.pot.$id;
+      Pots.addItem($scope.modal);
+      $scope.modal.hide();
+    } else {
+      //alert("keine werte eingegeben.");
+      var title = 'No values provided';
+      var template = '';
+      var logText = "No values provided";
+      $scope.showAlert(title, template, logText);
+    }
+  }
+  $scope.openModal = function() {
     $scope.modal.show();
   }
   $scope.closeModal = function() {
@@ -196,12 +211,19 @@ angular.module('starter.controllers', [])
   // Execute action on hide modal
   $scope.$on('modal.hidden', function() {
     //init fields
-    $scope.modal = null;
+    $scope.modal.name = null;
+    $scope.modal.description = null;
+    $scope.modal.amount = null;
+    $scope.modal.date = null;
   });
   // Execute action on remove modal
   $scope.$on('modal.removed', function() {
     // Execute action
-    $scope.modal = null;
+    //$scope.modal = null;
+    $scope.modal.name = null;
+    $scope.modal.description = null;
+    $scope.modal.amount = null;
+    $scope.modal.date = null;
   });
 })
 
@@ -357,7 +379,7 @@ angular.module('starter.controllers', [])
 
     // An elaborate, custom popup
     var myPopup = $ionicPopup.show({
-      template: '<label>Email:</label><input type="email" ng-model="register.email"><br><input type="password" ng-model="register.pw">',
+      template: '<label>Email:</label><input type="email" ng-model="register.email"><br><label>Password:</label><input type="password" ng-model="register.pw">',
       title: 'Enter Username and Password',
       subTitle: 'Please use normal things',
       scope: $scope,

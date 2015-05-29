@@ -11,11 +11,17 @@
         <label class="item item-input">
           <input type="text" placeholder="Description" ng-model="modal.description" ng-model-instant required>
         </label>
+        <label class="item item-input">
+          <input type="date" placeholder="Date" ng-model="modal.date" ng-model-instant required>
+        </label>
+        <label class="item item-input">
+          <input type="number" placeholder="Amount" ng-model="modal.amount" ng-model-instant required>
+        </label>
       </div>
     </form>
   </ion-content>
   <ion-footer-bar>
-  <button class="button button-balanced" ng-click="addPot()">
+  <button class="button button-balanced" ng-click="addPotItem()">
     add
   </button>
   <button class="button button-assertive" ng-click="closeModal()">
