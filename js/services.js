@@ -55,18 +55,25 @@ angular.module('starter.services', [])
 
     return {
       getAll: function(uid) {
-        var userReference = fb.child("users/" + uid);
-        var syncArray = $firebaseArray(userReference.child("pots"));
-        return syncArray;
-        //return $firebaseArray(potsRef);
+        var uR = fb.child("users/" + uid);
+        var sync = $firebaseArray(uR.child("pots"));
+        //var sync = $firebaseObject(uR.child("pots"));
+        return sync;
       },
       getNew: function(uid) {
-        var userReference = fb.child("users/" + uid);
-        var syncArray = $firebaseArray(userReference.child("pots"));
-        return syncArray;
+        var uR = fb.child("users/" + uid);
+        var sync = $firebaseArray(uR.child("pots"));
+        return sync;
       },
-      get: function(uid) {
-        console.log("call get");
+      get: function(potId) {
+        console.log("call Pots.get() for more details with Pot ID: " + potId);
+        var authData = JSON.parse(window.localStorage.getItem("authData"));
+        var uR = fb.child("users/" + authData.uid + "/pots/" + potId);
+        return uR;
+
+        //var sync = $firebaseArray(uR);
+        //return sync;
+
       },
       add: function(pot) {
         var authData = JSON.parse(window.localStorage.getItem("authData"));

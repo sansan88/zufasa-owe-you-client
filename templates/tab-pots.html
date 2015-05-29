@@ -8,7 +8,7 @@
   <ion-content>
     <ion-refresher on-refresh="doRefresh()"></ion-refresher>
     <ion-list>
-      <ion-item class="item-remove-animate item-icon-right" ng-repeat="pot in pots" type="item-text-wrap" href="#/tab/pots/{{pot.id}}" ng-class="{status: pot.status == 'archived'}">
+      <ion-item class="item-remove-animate item-icon-right" ng-repeat="pot in pots" type="item-text-wrap" href="#/tab/pots/{{pot.$id}}" ng-class="{status: pot.status == 'archived'}">
 <!-- item-avatar -->
 
 <!--        <img ng-src="{{pot.img}}">-->

@@ -4,20 +4,21 @@
   The FriendsCtrl pulls data from the Friends service (service.js)
   The Friends service returns an array of friend data
 -->
-<ion-view view-title="{{pot.name}}">
+<ion-view view-title="Pot Name: {{pot.name}}">
 
   <ion-nav-buttons side="right">
-    <button class="button" ng-click="addPotItem()">
-      add
+    <button class="button ion-plus" ng-click="addPotItem()">
+      add Items
     </button>
   </ion-nav-buttons>
 
   <ion-content class="padding">
+    <p>Description: {{pot.description}}</p>
     <!--<img ng-src="{{pot.img}}" style="width: 64px; height: 64px">-->
-    <p>{{pot.description}}</p>
-    <p>Created from: {{pot.creator}} at {{pot.datetime}}</p>
-    <p>Changed from: {{pot.changer}} at {{pot.changedatetime}}</p>
+    <!--<p>Created from: {{pot.creator}} at {{pot.datetime}}</p>
+    <p>Changed from: {{pot.changer}} at {{pot.changedatetime}}</p>-->
 
+    <h3>Details</h3>
     <ion-list>
       <ion-item class="item-icon-right" ng-repeat="item in pot.items" type="item-text-wrap">
         <div class="list card">
