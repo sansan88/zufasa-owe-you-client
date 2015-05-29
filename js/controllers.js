@@ -169,8 +169,12 @@ angular.module('starter.controllers', [])
   var uR = Pots.get($stateParams.potId);
   var daten = $firebaseObject(uR);
   $scope.pot = daten;
+
+  // Array mit Items?
   var items = $firebaseArray(uR);
-  $scope.items = items;
+  $scope.items = [];
+
+  $scope.items.push(items["-JqUfd7JcyD-ixWd2Hoy"]);
 
   //$scope.pot.potId = $stateParams.potId;
 
