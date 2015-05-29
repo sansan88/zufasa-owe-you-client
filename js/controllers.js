@@ -168,15 +168,16 @@ angular.module('starter.controllers', [])
 .controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots, $firebaseArray, $firebaseObject) {
   var uR = Pots.get($stateParams.potId);
   var daten = $firebaseObject(uR);
-  $scope.pot = daten;
-
-  // Array mit Items?
+  daten.$loaded().then(function(sync) {
+    $scope.pot = sync;
+  });
   var items = $firebaseArray(uR);
-  $scope.items = [];
+  items.$loaded().then(function(sync) {
+    $scope.pot.items = sync;
+  });
 
-  $scope.items.push(items["-JqUfd7JcyD-ixWd2Hoy"]);
 
-  //$scope.pot.potId = $stateParams.potId;
+
 
   //  Modal Pot Item
   $ionicModal.fromTemplateUrl('./templates/modal-pot-item.html', {
