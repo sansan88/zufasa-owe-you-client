@@ -212,11 +212,16 @@ angular.module('starter.controllers', [])
     items.$loaded().then(function(data) {
 
       for (var i = 0; i <= data.length; i++) {
-        if (data[i].hasOwnProperty("isItem")) {
-          $scope.pot.items.push(data[i]);
-          $scope.pot.amount = $scope.pot.amount + data[i].amount;
+        try {
+          if (data[i].hasOwnProperty("isItem")) {
+            $scope.pot.items.push(data[i]);
+            $scope.pot.amount = $scope.pot.amount + data[i].amount;
+          }
+        } catch (err) {
+          console.log("no isItem property");
         }
       }
+
     });
   });
 
