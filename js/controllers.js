@@ -15,7 +15,7 @@ angular.module('starter.controllers', [])
       });
     };
     // ENDE
-    Pots.getAll().$loaded().then(function(data) {
+    var ref = Pots.getAll().$loaded().then(function(data) {
 
       $scope.noPots = data.length;
       $scope.noPotItems = 0;
@@ -67,7 +67,8 @@ angular.module('starter.controllers', [])
     /*******************************************************/
     //init
     /*******************************************************/
-    Pots.getAll().$loaded().then(function(data) {
+    var ref = Pots.getAll();
+    ref.$loaded().then(function(data) {
       $scope.pots = data;
     });
 
