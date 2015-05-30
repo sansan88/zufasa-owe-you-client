@@ -44,7 +44,7 @@ angular.module('starter.controllers', [])
       });
 
       //chart
-      ay.pie_chart('pie-a', get_random_data(5), {percentage: false});
+      //ay.pie_chart('pie-a', get_random_data(5), {percentage: false});
 
 
     } else {
@@ -605,8 +605,8 @@ angular.module('starter.controllers', [])
   $scope.loginUser = function() {
       fb.onAuth(authDataCallback);
       fb.authWithPassword({
-        email: User.getEmail(),
-        password: User.getPassword()
+        email: $scope.user.username,
+        password: $scope.user.password
       }, function(error, authData) {
         if (error) {
           //          alert("Login Failed!", error);
