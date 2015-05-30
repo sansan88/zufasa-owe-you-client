@@ -13,6 +13,8 @@
   </ion-nav-buttons>
 
   <ion-content class="padding">
+
+
     <div class="list">
       <div class="item item-icon-left">
         <i class="icon ion-clipboard"></i>Name
@@ -40,23 +42,20 @@
     <!--<p>Created from: {{pot.creator}} at {{pot.datetime}}</p>
     <p>Changed from: {{pot.changer}} at {{pot.changedatetime}}</p>-->
 
-    <h3>Details</h3>
+
+    <h3>Receipts</h3>
     <ion-list>
       <ion-item class="item-icon-right" ng-repeat="item in pot.items" type="item-text-wrap">
-        <div class="list card">
-          <div class="item">
-            <h2>{{item.name}}</h2>
-            <p>{{item.date}}</p>
+        <div class="card">
+          <div class="item item-divider">
+            {{item.name}}
           </div>
-
-          <div class="item item-body">
-            <!--<img class="full-image" src="{{item.data}}">-->
-            <p>{{item.description}}</p>
-            <p class="subdued">{{item.amount}}</p>
-                <!--<p class="subdued">{{item.curr}}</a>
-                </p>-->
+          <div class="item item-text-wrap">
+            <p>Date:   {{item.date}}</p>
+            <p>Amount: {{item.amount}}</p>
           </div>
         </div>
+
       </ion-item>
     </ion-list>
   </ion-content>

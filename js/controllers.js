@@ -1,20 +1,60 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope, Pots, Lists) {
+.controller('DashCtrl', function($scope, Pots, Lists, $state, $ionicPopup, $firebaseArray) {
+    $scope.showAlert = function(title, template, logText) {
+      var alertPopup = $ionicPopup.alert({
+        title: title,
+        template: template
+      });
+      alertPopup.then(function(res) {
+        console.log(logText);
+      });
+    };
+    var fbAuth = fb.getAuth();
+    if (fbAuth) {
+      Pots.getAll(fbAuth.uid).$loaded().then(function(data) {
+        $scope.noPots = data.length;
+        $scope.noPotItems = 0;
+        $scope.totalSpendingsThisMonth = 0;
+        var pots = data;
+        var potItems = [];
 
-    $scope.noLists = Lists.getAll().length;
-    $scope.noListItems = 0;
-    var lists = Lists.getAll();
-    for (var i = 0; i < lists.length; i++) {
-      $scope.noListItems = $scope.noListItems + lists[i].items.length;
+
+        //Loop über Alle Pots
+        for (var i = 0; i < pots.length; i++) {
+          var uR = Pots.get(pots[i].$id); //Get Ref from each pot
+
+
+          //Position Data
+          var items = $firebaseArray(uR);
+          items.$loaded().then(function(data) { // data = positemarray
+
+            for (var i = 0; i <= data.length; i++) {
+              try {
+                if (data[i].hasOwnProperty("isItem")) { // richtige position?
+                  $scope.noPotItems++;
+                  $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + data[i].amount;
+                }
+              } catch (err) {
+                console.log("no isItem property");
+              }
+            } //for
+          }); //items loaded
+        };
+      });
+
+      //chart
+      ay.pie_chart('pie-a', get_random_data(5), {percentage: false});
+
+
+    } else {
+      var title = 'Please Login first';
+      var template = '';
+      var logText = "Please Login first";
+      $scope.showAlert(title, template, logText);
+      $state.go("tab.account");
     }
 
-    $scope.noPots = Pots.getAll().length;
-    $scope.noPotItems = 0;
-    var pots = Pots.getAll();
-    for (var i = 0; i < pots.length; i++) {
-      $scope.noPotItems = $scope.noPotItems + pots[i].items.length;;
-    }
   })
   //****************************************************************************
   //  CONTROLLER POTS
@@ -33,11 +73,9 @@ angular.module('starter.controllers', [])
 
     var fbAuth = fb.getAuth();
     if (fbAuth) {
-      /*var userReference = fb.child("users/" + fbAuth.uid);
-      var syncArray = $firebaseArray(userReference.child("pots"));
-      $scope.pots = syncArray;*/
-      $scope.pots = Pots.getAll(fbAuth.uid);
-
+      Pots.getAll(fbAuth.uid).$loaded().then(function(data) {
+        $scope.pots = data;
+      });
     } else {
       var title = 'Please Login first';
       var template = '';
@@ -50,10 +88,11 @@ angular.module('starter.controllers', [])
     $scope.doRefresh = function() {
       var fbAuth = fb.getAuth();
       if (fbAuth) {
-        var data = Pots.getNew(fbAuth.uid);
-        $scope.pots = data; //.concat($scope.pots);
-        $scope.$broadcast('scroll.refreshComplete');
-
+        Pots.getNew(fbAuth.uid).$loaded().then(function(data) {
+          //$scope.pots = _.uniq($scope.pots, data) ;
+          $scope.pots = data;
+          $scope.$broadcast('scroll.refreshComplete');
+        });
       } else {
         $scope.$broadcast('scroll.refreshComplete');
         var title = 'Please Login first';
@@ -166,18 +205,26 @@ angular.module('starter.controllers', [])
 //  CONTROLLER POTS DETAIL
 //****************************************************************************
 .controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots, $firebaseArray, $firebaseObject) {
+
   var uR = Pots.get($stateParams.potId);
+  //Header Data
   var daten = $firebaseObject(uR);
   daten.$loaded().then(function(sync) {
     $scope.pot = sync;
+    $scope.pot.items = [];
+
+    //Position Data
+    var items = $firebaseArray(uR);
+    items.$loaded().then(function(data) {
+
+      for (var i = 0; i <= data.length; i++) {
+        if (data[i].hasOwnProperty("isItem")) {
+          $scope.pot.items.push(data[i]);
+          $scope.pot.amount = $scope.pot.amount + data[i].amount;
+        }
+      }
+    });
   });
-  var items = $firebaseArray(uR);
-  items.$loaded().then(function(sync) {
-    $scope.pot.items = sync;
-  });
-
-
-
 
   //  Modal Pot Item
   $ionicModal.fromTemplateUrl('./templates/modal-pot-item.html', {
@@ -189,7 +236,7 @@ angular.module('starter.controllers', [])
     $scope.modal = modal;
   });
   $scope.addPotItem = function() {
-    if ($scope.modal.description && $scope.modal.name && $scope.modal.amount) {
+    if ($scope.modal.name && $scope.modal.amount && $scope.modal.date) {
       $scope.modal.potId = $scope.pot.$id;
       Pots.addItem($scope.modal);
       $scope.modal.hide();
@@ -217,7 +264,7 @@ angular.module('starter.controllers', [])
   $scope.$on('modal.hidden', function() {
     //init fields
     $scope.modal.name = null;
-    $scope.modal.description = null;
+    //$scope.modal.description = null;
     $scope.modal.amount = null;
     $scope.modal.date = null;
   });
@@ -226,7 +273,7 @@ angular.module('starter.controllers', [])
     // Execute action
     //$scope.modal = null;
     $scope.modal.name = null;
-    $scope.modal.description = null;
+    //$scope.modal.description = null;
     $scope.modal.amount = null;
     $scope.modal.date = null;
   });
@@ -529,9 +576,9 @@ angular.module('starter.controllers', [])
       $scope.user.username = "";
       //alert("Deleted Logindata");
 
-      var title = 'Deleted Logindata on device';
+      var title = 'Deleted Userdata on device';
       var template = '';
-      var logText = "Deleted Logindata on device";
+      var logText = "Deleted Userdata on device";
       $scope.showAlert(title, template, logText);
     }
     /*********************************************
@@ -544,9 +591,12 @@ angular.module('starter.controllers', [])
       if ($scope.user.password !== null) {
         window.localStorage.setItem("password", $scope.user.password); //sollte auch in store..
       }
-      var title = 'Saved Logindata on device';
+      if ($scope.user.budget !== null) {
+        window.localStorage.setItem("budget", Number.parseInt($scope.user.budget)); //sollte auch in store..
+      }
+      var title = 'Saved userdata on device';
       var template = '';
-      var logText = "Saved Logindata on device";
+      var logText = "Saved userdata on device";
       $scope.showAlert(title, template, logText);
     }
     /*********************************************
@@ -586,7 +636,7 @@ angular.module('starter.controllers', [])
       titleText: 'Account settings',
 
       buttons: [{
-          text: 'Save logindata'
+          text: 'Save userdata'
         }, {
           text: 'Change email'
         }, {
@@ -597,7 +647,7 @@ angular.module('starter.controllers', [])
 
       ],
 
-      destructiveText: 'Delete logindata',
+      destructiveText: 'Delete userdata',
       destructiveButtonClicked: function() {
         $scope.deleteUser();
         return true;

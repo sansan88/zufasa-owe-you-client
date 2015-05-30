@@ -1,13 +1,6 @@
 <ion-view view-title="Dashboard">
   <ion-content class="padding">
-    <div class="list card">
-      <div class="item item-divider">Recent Updates</div>
-      <div class="item item-body">
-        <div>
-          no news is good news.
-        </div>
-      </div>
-    </div>
+
     <div class="list card">
       <div class="item item-divider">Pots</div>
       <div class="item item-body">
@@ -17,10 +10,20 @@
       </div>
     </div>
     <div class="list card">
-      <div class="item item-divider">Lists</div>
+      <div class="item item-divider">Total spendings this month</div>
       <div class="item item-body">
         <div>
-          You have <b>{{noLists}}</b> lists with <b>{{noListItems}}</b> items.
+          {{totalSpendingsThisMonth}} CHF
+        </div>
+      </div>
+    </div>
+    <div class="list card">
+      <div class="item item-divider">Summary</div>
+      <div class="item item-body">
+        <div class="container">
+          <div class="chart">
+            <svg class="pie-a"></svg>
+          </div>
         </div>
       </div>
     </div>

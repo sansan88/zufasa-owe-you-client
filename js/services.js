@@ -18,7 +18,8 @@ angular.module('starter.services', [])
     getUser: function() {
       var user = {
         username: window.localStorage.getItem("username"),
-        password: window.localStorage.getItem("password")
+        password: window.localStorage.getItem("password"),
+        budget: Number.parseInt(window.localStorage.getItem("budget"))
       };
       return user;
     },
@@ -27,6 +28,9 @@ angular.module('starter.services', [])
     },
     getPassword: function() {
       return window.localStorage.getItem("password");
+    },
+    getBudget: function() {
+      return Number.parseInt(window.localStorage.getItem("budget"));
     },
     setAuthData: function(data) {
       window.localStorage.setItem("authData", JSON.stringify(data));
@@ -57,7 +61,6 @@ angular.module('starter.services', [])
       getAll: function(uid) {
         var uR = fb.child("users/" + uid);
         var sync = $firebaseArray(uR.child("pots"));
-        //var sync = $firebaseObject(uR.child("pots"));
         return sync;
       },
       getNew: function(uid) {
@@ -70,9 +73,6 @@ angular.module('starter.services', [])
         var authData = JSON.parse(window.localStorage.getItem("authData"));
         var uR = fb.child("users/" + authData.uid + "/pots/" + potId);
         return uR;
-
-        //var sync = $firebaseArray(uR);
-        //return sync;
 
       },
       add: function(pot) {
@@ -90,8 +90,9 @@ angular.module('starter.services', [])
         var syncArray = $firebaseArray(uR.child("pots/" + pot.potId));
         syncArray.$add({
           'name': pot.name,
-          'description': pot.description,
-          'amount': pot.amount
+          'date': pot.date.toString(),
+          'amount': pot.amount,
+          'isItem': true
         });
       },
       setStatus: function(pot, status) {
