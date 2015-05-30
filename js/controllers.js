@@ -19,11 +19,9 @@ angular.module('starter.controllers', [])
         var pots = data;
         var potItems = [];
 
-
         //Loop über Alle Pots
         for (var i = 0; i < pots.length; i++) {
           var uR = Pots.get(pots[i].$id); //Get Ref from each pot
-
 
           //Position Data
           var items = $firebaseArray(uR);
@@ -42,10 +40,6 @@ angular.module('starter.controllers', [])
           }); //items loaded
         };
       });
-
-      //chart
-      //ay.pie_chart('pie-a', get_random_data(5), {percentage: false});
-
 
     } else {
       var title = 'Please Login first';
@@ -564,6 +558,7 @@ angular.module('starter.controllers', [])
   $scope.logout = function() {
     fb.unauth();
     User.setAuthData(null);
+    //clear Data in Scope
   }
 
   /*********************************************
