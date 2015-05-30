@@ -592,7 +592,7 @@ angular.module('starter.controllers', [])
         window.localStorage.setItem("password", $scope.user.password); //sollte auch in store..
       }
       if ($scope.user.budget !== null) {
-        window.localStorage.setItem("budget", Number.parseInt($scope.user.budget)); //sollte auch in store..
+        window.localStorage.setItem("budget", $scope.user.budget); //sollte auch in store..
       }
       var title = 'Saved userdata on device';
       var template = '';
@@ -604,27 +604,37 @@ angular.module('starter.controllers', [])
     *********************************************/
   $scope.loginUser = function() {
       fb.onAuth(authDataCallback);
-      fb.authWithPassword({
-        email: $scope.user.username,
-        password: $scope.user.password
-      }, function(error, authData) {
-        if (error) {
-          //          alert("Login Failed!", error);
-          var title = 'Login Failed';
-          var template = '';
-          var logText = "Login failed" + error;
-          $scope.showAlert(title, template, logText);
-        } else {
-          var title = 'Authenticated successfully';
-          var template = '';
-          var logText = "Authenticated successfully";
-          $scope.showAlert(title, template, logText);
 
-          //alert("Authenticated successfully"); //with payload:", authData);
-          //console.log(authData);
-          User.setAuthData(authData);
-        }
-      });
+      if ($scope.user.username && $scope.user.password) {
+        fb.authWithPassword({
+          email: $scope.user.username,
+          password: $scope.user.password
+        }, function(error, authData) {
+          if (error) {
+            //          alert("Login Failed!", error);
+            var title = 'Login Failed';
+            var template = '';
+            var logText = "Login failed" + error;
+            $scope.showAlert(title, template, logText);
+          } else {
+            var title = 'Authenticated successfully';
+            var template = '';
+            var logText = "Authenticated successfully";
+            $scope.showAlert(title, template, logText);
+
+            //alert("Authenticated successfully"); //with payload:", authData);
+            //console.log(authData);
+            User.setAuthData(authData);
+          }
+        });
+      }else{
+        var title = 'No logindata available';
+        var template = '';
+        var logText = "No logindata available";
+        $scope.showAlert(title, template, logText);
+      }
+
+
     }
     /*****************************************************
       // Triggered on a button click, or some other target

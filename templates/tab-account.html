@@ -5,38 +5,31 @@
     </button>
   </ion-nav-buttons>
 
-    <ion-content>
-       <div>
-           <div class="list list-inset">
-               <label class="item item-input">
-                   <input ng-model="user.username" type="text" placeholder="Username" />
-               </label>
-               <label class="item item-input">
-                   <input ng-model="user.password" type="password" placeholder="Password" />
-               </label>
-           </div>
-           <div class="padding-left padding-right">
-               <div class="button-bar">
-                   <a class="button button-balanced" ng-click="loginUser()">Login</a>
-                   <a class="button button-assertive" ng-click="logout()">Logout</a>
-               </div>
-               <br>
-               <div class="button-bar">
-                   <a class="button button-positive" ng-click="register()">Register</a>
-               </div>
-           </div>
-           <div class="list list-inset">
-               <label class="item item-input">
-                   <input ng-model="user.budget" type="number" placeholder="Budget" />
-               </label>
-           </div>
-       </div>
-
-    <!--
-    <ion-list>
-    <ion-toggle  ng-model="settings.saveUser">
-      Save Login data
-    </ion-toggle>
-  </ion-list>-->
+  <ion-content>
+    <div>
+      <div class="list list-inset">
+        <label class="item item-input">
+          <input ng-model="user.username" type="text" placeholder="Username" />
+        </label>
+        <label class="item item-input">
+          <input ng-model="user.password" type="password" placeholder="Password" />
+        </label>
+      </div>
+      <div class="padding-left padding-right">
+        <div class="button-bar">
+          <a class="button button-balanced" ng-click="loginUser()">Login</a>
+          <a class="button button-assertive" ng-click="logout()">Logout</a>
+        </div>
+        <br>
+        <div class="button-bar">
+          <a class="button button-positive" ng-click="register()">Register</a>
+        </div>
+      </div>
+      <div class="list list-inset">
+        <label class="item item-input">
+          <input ng-model="user.budget" type="number" placeholder="Budget" />
+        </label>
+      </div>
+    </div>
   </ion-content>
 </ion-view>

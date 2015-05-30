@@ -15,14 +15,6 @@ angular.module('starter.services', [])
 .factory('User', function() {
   //Public Return Methods
   return {
-    getUser: function() {
-      var user = {
-        username: window.localStorage.getItem("username"),
-        password: window.localStorage.getItem("password"),
-        budget: Number.parseInt(window.localStorage.getItem("budget"))
-      };
-      return user;
-    },
     getEmail: function() {
       return window.localStorage.getItem("username");
     },
@@ -32,6 +24,15 @@ angular.module('starter.services', [])
     getBudget: function() {
       return Number.parseInt(window.localStorage.getItem("budget"));
     },
+    getUser: function() {
+      var user = {
+        username: this.getEmail(),
+        password: this.getPassword(),
+        budget: this.getBudget()
+      };
+      return user;
+    },
+
     setAuthData: function(data) {
       window.localStorage.setItem("authData", JSON.stringify(data));
     }
