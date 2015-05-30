@@ -15,36 +15,71 @@ angular.module('starter.controllers', [])
       });
     };
     // ENDE
-    var ref = Pots.getAll().$loaded().then(function(data) {
+    var fbAuth = fb.getAuth();
+    if (fbAuth) {
+      Pots.getAll().$loaded().then(function(data) {
 
-      $scope.noPots = data.length;
-      $scope.noPotItems = 0;
-      $scope.totalSpendingsThisMonth = 0;
+        $scope.noPots = data.length;
+        $scope.noPotItems = 0;
+        $scope.totalSpendingsThisMonth = 0;
 
-      var pots = data;
-      var potItems = [];
+        var pots = data;
+        var potItems = [];
 
-      //Loop über Alle Pots
-      for (var i = 0; i < pots.length; i++) {
-        var uR = Pots.get(pots[i].$id); //Get Ref from each pot
+        //Loop über Alle Pots
+        for (var i = 0; i < pots.length; i++) {
+          var uR = Pots.get(pots[i].$id); //Get Ref from each pot
 
-        //Position Data
-        var items = $firebaseArray(uR);
-        items.$loaded().then(function(data) { // data = positemarray
+          //Position Data
+          var items = $firebaseArray(uR);
+          items.$loaded().then(function(data) { // data = positemarray
 
-          for (var i = 0; i <= data.length; i++) {
-            try {
-              if (data[i].hasOwnProperty("isItem")) { // richtige position?
-                $scope.noPotItems++;
-                $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + data[i].amount;
+            for (var i = 0; i <= data.length; i++) {
+              try {
+                if (data[i].hasOwnProperty("isItem")) { // richtige position?
+                  $scope.noPotItems++;
+                  $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + data[i].amount;
+                }
+              } catch (err) {
+                console.log("no isItem property");
               }
-            } catch (err) {
-              console.log("no isItem property");
+            } //for
+          }); //items loaded
+        };
+      });
+    } else {
+      //call popup
+      // An elaborate, custom popup
+      $scope.data = {};
+      var myPopup = $ionicPopup.show({
+        template: '<label>Username:</label><input type="email" ng-model="data.username"><label>Password:</label><input type="password" ng-model="data.password">',
+        title: 'Enter Logindata',
+        subTitle: 'Please use normal things',
+        scope: $scope,
+        buttons: [{
+          text: 'Cancel'
+        }, {
+          text: '<b>Login</b>',
+          type: 'button-positive',
+          onTap: function(e) {
+            if (!$scope.data.username || !$scope.data.password) {
+              //don't allow the user to close unless he enters wifi password
+              e.preventDefault();
+            } else {
+              return $scope.data;
             }
-          } //for
-        }); //items loaded
-      };
-    });
+          }
+        }]
+      });
+      myPopup.then(function(res) {
+        console.log('Tapped!', res);
+        User.loginUser(res.username, res.password);
+        $state.go("dash");
+      });
+      $timeout(function() {
+        myPopup.close(); //close the popup after 3 seconds for some reason
+      }, 3000);
+    };
   })
   //****************************************************************************
   //  CONTROLLER POTS
