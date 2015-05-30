@@ -9,7 +9,7 @@
     <div>
       <div class="list list-inset">
         <label class="item item-input">
-          <input ng-model="user.username" type="text" placeholder="Username" />
+          <input ng-model="user.username" type="email" placeholder="Username" />
         </label>
         <label class="item item-input">
           <input ng-model="user.password" type="password" placeholder="Password" />
@@ -18,11 +18,11 @@
       <div class="padding-left padding-right">
         <div class="button-bar">
           <a class="button button-balanced" ng-click="loginUser()">Login</a>
-          <a class="button button-assertive" ng-click="logout()">Logout</a>
+          <a class="button button-assertive" ng-click="logoutUser()">Logout</a>
         </div>
         <br>
         <div class="button-bar">
-          <a class="button button-positive" ng-click="register()">Register</a>
+          <a class="button button-positive" ng-click="registerUser()">Register</a>
         </div>
       </div>
       <div class="list list-inset">

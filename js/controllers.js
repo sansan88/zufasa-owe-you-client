@@ -1,6 +1,10 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope, Pots, Lists, $state, $ionicPopup, $firebaseArray) {
+.controller('DashCtrl', function($scope, Pots, User, $state, $timeout, $ionicPopup, $firebaseArray) {
+
+    /*******************************************************/
+    // Globale Funktionen pro controller               START
+    /*******************************************************/
     $scope.showAlert = function(title, template, logText) {
       var alertPopup = $ionicPopup.alert({
         title: title,
@@ -10,51 +14,45 @@ angular.module('starter.controllers', [])
         console.log(logText);
       });
     };
-    var fbAuth = fb.getAuth();
-    if (fbAuth) {
-      Pots.getAll(fbAuth.uid).$loaded().then(function(data) {
-        $scope.noPots = data.length;
-        $scope.noPotItems = 0;
-        $scope.totalSpendingsThisMonth = 0;
-        var pots = data;
-        var potItems = [];
+    // ENDE
+    Pots.getAll().$loaded().then(function(data) {
 
-        //Loop über Alle Pots
-        for (var i = 0; i < pots.length; i++) {
-          var uR = Pots.get(pots[i].$id); //Get Ref from each pot
+      $scope.noPots = data.length;
+      $scope.noPotItems = 0;
+      $scope.totalSpendingsThisMonth = 0;
 
-          //Position Data
-          var items = $firebaseArray(uR);
-          items.$loaded().then(function(data) { // data = positemarray
+      var pots = data;
+      var potItems = [];
 
-            for (var i = 0; i <= data.length; i++) {
-              try {
-                if (data[i].hasOwnProperty("isItem")) { // richtige position?
-                  $scope.noPotItems++;
-                  $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + data[i].amount;
-                }
-              } catch (err) {
-                console.log("no isItem property");
+      //Loop über Alle Pots
+      for (var i = 0; i < pots.length; i++) {
+        var uR = Pots.get(pots[i].$id); //Get Ref from each pot
+
+        //Position Data
+        var items = $firebaseArray(uR);
+        items.$loaded().then(function(data) { // data = positemarray
+
+          for (var i = 0; i <= data.length; i++) {
+            try {
+              if (data[i].hasOwnProperty("isItem")) { // richtige position?
+                $scope.noPotItems++;
+                $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + data[i].amount;
               }
-            } //for
-          }); //items loaded
-        };
-      });
-
-    } else {
-      var title = 'Please Login first';
-      var template = '';
-      var logText = "Please Login first";
-      $scope.showAlert(title, template, logText);
-      $state.go("tab.account");
-    }
-
+            } catch (err) {
+              console.log("no isItem property");
+            }
+          } //for
+        }); //items loaded
+      };
+    });
   })
   //****************************************************************************
   //  CONTROLLER POTS
   //****************************************************************************
-  .controller('PotsCtrl', function($scope, $ionicModal, Pots, $firebaseAuth, $firebaseArray, $state, $ionicListDelegate, $ionicPopup) {
-
+  .controller('PotsCtrl', function($scope, Pots, $ionicModal, $state, $ionicListDelegate, $ionicPopup) {
+    /*******************************************************/
+    // Globale Funktionen pro controller               START
+    /*******************************************************/
     $scope.showAlert = function(title, template, logText) {
       var alertPopup = $ionicPopup.alert({
         title: title,
@@ -64,46 +62,39 @@ angular.module('starter.controllers', [])
         console.log(logText);
       });
     };
+    //   ENDE
 
-    var fbAuth = fb.getAuth();
-    if (fbAuth) {
-      Pots.getAll(fbAuth.uid).$loaded().then(function(data) {
-        $scope.pots = data;
-      });
-    } else {
-      var title = 'Please Login first';
-      var template = '';
-      var logText = "Please Login first";
-      $scope.showAlert(title, template, logText);
-      $state.go("tab.account");
-    }
+    /*******************************************************/
+    //init
+    /*******************************************************/
+    Pots.getAll().$loaded().then(function(data) {
+      $scope.pots = data;
+    });
 
+    /*******************************************************/
+    // View Methoden
+    /*******************************************************/
     //Get Data from Store
     $scope.doRefresh = function() {
-      var fbAuth = fb.getAuth();
-      if (fbAuth) {
-        Pots.getNew(fbAuth.uid).$loaded().then(function(data) {
-          //$scope.pots = _.uniq($scope.pots, data) ;
-          $scope.pots = data;
-          $scope.$broadcast('scroll.refreshComplete');
-        });
-      } else {
+      Pots.getNew(fbAuth.uid).$loaded().then(function(data) {
+        //$scope.pots = _.uniq($scope.pots, data) ;
+        $scope.pots = data;
         $scope.$broadcast('scroll.refreshComplete');
+      });
+
+      /*  $scope.$broadcast('scroll.refreshComplete');
         var title = 'Please Login first';
         var template = '';
         var logText = "Please Login first";
-        $scope.showAlert(title, template, logText);
-        $state.go("tab.account");
-      }
+        $scope.showAlert(title, template, logText);*/
+      //$state.go("tab.account");
     };
 
-    //Pot Functions
     $scope.addPot = function() { //Pots.add();
       if ($scope.modal.description && $scope.modal.name) {
         Pots.add($scope.modal);
         $scope.modal.hide();
       } else {
-        //alert("keine werte eingegeben.");
         var title = 'No values provided';
         var template = '';
         var logText = "No values provided";
@@ -118,8 +109,9 @@ angular.module('starter.controllers', [])
       Pots.setStatus(pot, 'removed');
       $ionicListDelegate.closeOptionButtons();
     };
-
-    //  MODAL FENSTER POT
+    /*************************************************/
+    //  MODAL POT
+    /*************************************************/
     $ionicModal.fromTemplateUrl('templates/modal-pot.html', {
       scope: $scope,
       animation: 'slide-in-up',
@@ -134,43 +126,7 @@ angular.module('starter.controllers', [])
       $scope.modal.hide();
     };
     $scope.openModal = function() {
-      var fbAuth = fb.getAuth();
-      if (fbAuth) {
-
-        $scope.modal.show();
-
-        //get Picture
-        var takePicture = document.querySelector("#take-picture");
-        takePicture.onchange = function(event) {
-          // Get a reference to the taken picture or chosen file
-          var files = event.target.files,
-            file;
-          if (files && files.length > 0) {
-            file = files[0];
-            $scope.modal.picture = window.URL.createObjectURL(file);
-            var URL = window.URL || window.webkitURL;
-            // Create ObjectURL
-            var imgURL = URL.createObjectURL(file);
-
-            var reader = new window.FileReader();
-            reader.readAsDataURL(imgURL);
-            reader.onloadend = function() {
-              var base64data = reader.result;
-              console.log(base64data);
-              $scope.modal.picture = base64data;
-            }
-          }
-        };
-      } else {
-        var title = 'Please Login first';
-        var template = '';
-        var logText = "Please Login first";
-        $scope.showAlert(title, template, logText);
-
-
-        //alert("Please Login first");
-        $state.go("tab.account");
-      }
+      $scope.modal.show();
     };
     //Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
@@ -180,8 +136,6 @@ angular.module('starter.controllers', [])
     });
     // Execute action on hide modal
     $scope.$on('modal.hidden', function() {
-      //init fields
-      //$scope.modal = null;
       $scope.modal.name = null;
       $scope.modal.description = null;
 
@@ -200,391 +154,173 @@ angular.module('starter.controllers', [])
 //****************************************************************************
 .controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots, $firebaseArray, $firebaseObject) {
 
-  var uR = Pots.get($stateParams.potId);
-  //Header Data
-  var daten = $firebaseObject(uR);
-  daten.$loaded().then(function(sync) {
-    $scope.pot = sync;
-    $scope.pot.items = [];
+    //init
+    var uR = Pots.get($stateParams.potId);
+    //Header Data
+    var daten = $firebaseObject(uR);
+    daten.$loaded().then(function(sync) {
+      $scope.pot = sync;
+      $scope.pot.items = [];
 
-    //Position Data
-    var items = $firebaseArray(uR);
-    items.$loaded().then(function(data) {
+      //Position Data
+      var items = $firebaseArray(uR);
+      items.$loaded().then(function(data) {
 
-      for (var i = 0; i <= data.length; i++) {
-        try {
-          if (data[i].hasOwnProperty("isItem")) {
-            $scope.pot.items.push(data[i]);
-            $scope.pot.amount = $scope.pot.amount + data[i].amount;
+        for (var i = 0; i <= data.length; i++) {
+          try {
+            if (data[i].hasOwnProperty("isItem")) {
+              $scope.pot.items.push(data[i]);
+              $scope.pot.amount = $scope.pot.amount + data[i].amount;
+            }
+          } catch (err) {
+            console.log("no isItem property");
           }
-        } catch (err) {
-          console.log("no isItem property");
         }
-      }
 
-    });
-  });
-
-  //  Modal Pot Item
-  $ionicModal.fromTemplateUrl('./templates/modal-pot-item.html', {
-    scope: $scope,
-    animation: 'slide-in-up',
-    focusFirstInput: false,
-    backdropClickToClose: false
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-  $scope.addPotItem = function() {
-    if ($scope.modal.name && $scope.modal.amount && $scope.modal.date) {
-      $scope.modal.potId = $scope.pot.$id;
-      Pots.addItem($scope.modal);
-      $scope.modal.hide();
-    } else {
-      //alert("keine werte eingegeben.");
-      var title = 'No values provided';
-      var template = '';
-      var logText = "No values provided";
-      $scope.showAlert(title, template, logText);
-    }
-  }
-  $scope.openModal = function() {
-    $scope.modal.show();
-  }
-  $scope.closeModal = function() {
-    $scope.modal.hide();
-  };
-  //Cleanup the modal when we're done with it!
-  $scope.$on('$destroy', function() {
-    try {
-      $scope.modal.remove();
-    } catch (error) {}
-  });
-  // Execute action on hide modal
-  $scope.$on('modal.hidden', function() {
-    //init fields
-    $scope.modal.name = null;
-    //$scope.modal.description = null;
-    $scope.modal.amount = null;
-    $scope.modal.date = null;
-  });
-  // Execute action on remove modal
-  $scope.$on('modal.removed', function() {
-    // Execute action
-    //$scope.modal = null;
-    $scope.modal.name = null;
-    //$scope.modal.description = null;
-    $scope.modal.amount = null;
-    $scope.modal.date = null;
-  });
-})
-
-//****************************************************************************
-//  LIST
-//****************************************************************************
-.controller('ListsCtrl', function($scope, $ionicModal, Lists) {
-  $scope.lists = Lists.getAll();
-
-  //List Functions
-  $scope.addList = function() {
-    if ($scope.modal.description && $scope.modal.name) {
-      $scope.lists.$add({
-        'name': $scope.modal.name,
-        'description': $scope.modal.description
-          //'picture': $scope.modal.picture
       });
-      $scope.modal.hide();
-    } else {
-      var title = 'No values provided';
-      var template = '';
-      var logText = "No values provided";
-      $scope.showAlert(title, template, logText);
-      //alert("keine werte eingegeben.");
-    }
-
-  };
-  $scope.archive = function(list) {
-    var listRef = new Firebase('https://zoy-client.firebaseio.com/lists/' + list.$id);
-    listRef.child('status').set('archived');
-    $ionicListDelegate.closeOptionButtons();
-  };
-  $scope.remove = function(list) {
-    var listRef = new Firebase('https://zoy-client.firebaseio.com/lists/' + list.$id);
-    listRef.child('status').set('removed');
-    listRef.remove();
-    $ionicListDelegate.closeOptionButtons();
-  };
-
-  $ionicModal.fromTemplateUrl('templates/modal-list.html', {
-    scope: $scope,
-    animation: 'slide-in-up',
-    focusFirstInput: false,
-    backdropClickToClose: false,
-    hardwareBackButtonClose: false,
-    focusFirstInput: true
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-  $scope.closeModal = function() {
-    $scope.modal.hide();
-  };
-  $scope.openModal = function() {
-    $scope.modal.show()
-  };
-
-
-  //Cleanup the modal when we're done with it!
-  $scope.$on('$destroy', function() {
-    try {
-      $scope.modal.remove();
-    } catch (error) {}
-  });
-  // Execute action on hide modal
-  $scope.$on('modal.hidden', function() {
-    //init fields
-    //$scope.modal = null;
-    $scope.modal.name = null;
-    $scope.modal.description = null;
-  });
-  // Execute action on remove modal
-  $scope.$on('modal.removed', function() {
-    // Execute action
-    //$scope.modal = null;
-    $scope.modal.name = null;
-    $scope.modal.description = null;
-  });
-})
-
-//****************************************************************************
-//  MODAL FENSTER LIST ITEM
-//****************************************************************************
-/*.controller('ListDetailCtrl', function($scope, $ionicModal, $stateParams, Lists) {
-  $scope.list = Lists.get($stateParams.listId);
-
-
-  $ionicModal.fromTemplateUrl('./templates/modal-list-item.html', {
-    scope: $scope,
-    animation: 'slide-in-up',
-    focusFirstInput: false,
-    backdropClickToClose: false
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  $scope.addListItem = function() {
-    $scope.modal.show();
-  }
-  $scope.closeModal = function() {
-    $scope.modal.hide();
-  };
-  //Cleanup the modal when we're done with it!
-  $scope.$on('$destroy', function() {
-    try {
-      $scope.modal.remove();
-    } catch (error) {}
-  });
-  // Execute action on hide modal
-  $scope.$on('modal.hidden', function() {
-    //init fields
-    $scope.modal = null;
-  });
-  // Execute action on remove modal
-  $scope.$on('modal.removed', function() {
-    // Execute action
-    $scope.modal = null;
-  });
-
-})
-*/
-.controller('AccountCtrl', function($scope, User, $ionicActionSheet, $timeout, $state, $firebaseAuth, $ionicPopup) {
-
-  //Get Auth Object
-  var fbAuth = $firebaseAuth(fb);
-
-  //Get User Data
-  $scope.user = User.getUser();
-
-  // Create a callback which logs the current auth state
-  function authDataCallback(authData) {
-    if (authData) {
-      console.log("User " + authData.uid + " is logged in with " + authData.provider);
-    } else {
-      console.log("User is logged out");
-    }
-  }
-
-  //Create Alert Popup
-  // An alert dialog
-  $scope.showAlert = function(title, template, logText) {
-    var alertPopup = $ionicPopup.alert({
-      title: title,
-      template: template
     });
-    alertPopup.then(function(res) {
-      console.log(logText);
-    });
-  };
-
-  $scope.register = function() {
-    //var newEmail = prompt("Set new email", "enter new email here");
-    //var newPW = prompt("Set new password", "enter new password here");
-
-    // An elaborate, custom popup
-    var myPopup = $ionicPopup.show({
-      template: '<label>Email:</label><input type="email" ng-model="register.email"><br><label>Password:</label><input type="password" ng-model="register.pw">',
-      title: 'Enter Username and Password',
-      subTitle: 'Please use normal things',
+    /******************************************************/
+    //  Modal Pot Item
+    /******************************************************/
+    $ionicModal.fromTemplateUrl('./templates/modal-pot-item.html', {
       scope: $scope,
-      buttons: [{
-        text: 'Cancel'
-      }, {
-        text: '<b>Register new User</b>',
-        type: 'button-positive',
-        onTap: function(e) {
-          if (!$scope.register.pw && !$scope.register.email) {
-            //don't allow the user to close unless he enters wifi password
-            e.preventDefault();
-          } else {
-            return $scope.register;
-          }
-        }
-      }]
+      animation: 'slide-in-up',
+      focusFirstInput: false,
+      backdropClickToClose: false
+    }).then(function(modal) {
+      $scope.modal = modal;
     });
-    myPopup.then(function(res) {
+    $scope.addPotItem = function() {
+      if ($scope.modal.name && $scope.modal.amount && $scope.modal.date) {
+        $scope.modal.potId = $scope.pot.$id;
+        Pots.addItem($scope.modal);
+        $scope.modal.hide();
+      } else {
+        //alert("keine werte eingegeben.");
+        var title = 'No values provided';
+        var template = '';
+        var logText = "No values provided";
+        $scope.showAlert(title, template, logText);
+      }
+    };
+    $scope.openModal = function() {
+      $scope.modal.show();
+    }
+    $scope.closeModal = function() {
+      $scope.modal.hide();
+    };
+    //Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+      try {
+        $scope.modal.remove();
+      } catch (error) {}
+    });
+    // Execute action on hide modal
+    $scope.$on('modal.hidden', function() {
+      //init fields
+      $scope.modal.name = null;
+      $scope.modal.amount = null;
+      $scope.modal.date = null;
+    });
+    // Execute action on remove modal
+    $scope.$on('modal.removed', function() {
+      // Execute action
+      //$scope.modal = null;
+      $scope.modal.name = null;
+      $scope.modal.amount = null;
+      $scope.modal.date = null;
+    });
+  })
+  //****************************************************************************
+  //  CONTROLLER ACCOUNT
+  //****************************************************************************
+  .controller('AccountCtrl', function($scope, User, $ionicActionSheet, $timeout, $state, $firebaseAuth, $ionicPopup) {
 
-      fb.createUser({
-        email: $scope.register.email,
-        password: $scope.register.pw
-      }, function(error, userData) {
-        if (error) {
-          var title = 'Error creating user:';
-          var template = error;
-          var logText = "Error creating user:" + error;
+    //init
+    $scope.user = User.getUser(); //Get User Data
 
-          $scope.showAlert(title, template, logText);
-
-        } else {
-          var title = 'Successfully created user account';
-          var template = '';
-          var logText = "Successfully created user account with uid:" + userData.uid;
-
-          $scope.showAlert(title, template, logText);
-
-          $scope.user.password = $scope.register.pw;
-          $scope.user.username = $scope.register.email;
-          $scope.saveUser();
-        }
+    /*******************************************************/
+    // Globale Funktionen pro controller               START
+    /*******************************************************/
+    $scope.showAlert = function(message) {
+      var alertPopup = $ionicPopup.alert({
+        title: message.title,
+        template: message.template
+      }).then(function(res) {
+        console.log(res.logText);
       });
+    };
+    //ENDE
 
-    });
-    $timeout(function() {
-      myPopup.close(); //close the popup after 3 seconds for some reason
-    }, 30000);
+    /**********************************************/
+    // VIEW Mehtoden
+    /**********************************************/
+    $scope.registerUser = function() {
+      var myPopup = $ionicPopup.show({
+        template: '<label>Email:</label><input type="email" ng-model="register.username"><br><label>Password:</label><input type="password" ng-model="register.password">',
+        title: 'Enter Username and Password',
+        subTitle: 'Please use normal things',
+        scope: $scope,
+        buttons: [{
+            text: 'Cancel'
+          }, {
+            text: '<b>Register new User</b>',
+            type: 'button-positive',
+            onTap: function(e) {
+              if (!$scope.register.password && !$scope.register.username) {
+                //don't allow the user to close unless he enters wifi password
+                e.preventDefault();
+              } else {
+                return $scope.register;
+              }
+            }
+          }]
+          //      });
+          //      myPopup.then(function(res) {
+      }).then(function(res) { //neu, für das oben
+        if (res) {
+          User.registerUser(res)
+        };
+      });
+      $timeout(function() {
+        myPopup.close(); //close the popup after 3 seconds for some reason
+      }, 30000);
+    };
 
+    $scope.changeUserPassword = function() {
+      var newPW = prompt("Set new password", "enter new password here");
+      User.changeUserPassword(User.getUser(), newPW);
+    };
 
-  }
+    $scope.changeUserEmail = function() {
+      var newEmail = prompt("Set new email", "enter new email here");
+      User.changeUserEmail(User.getUser(), newEmail);
+    };
 
-  $scope.changePW = function() {
-    var newPW = prompt("Set new password", "enter new password here");
-    fb.changePassword({
-      email: $scope.user.username,
-      oldPassword: $scope.user.password,
-      newPassword: newPW
-    }, function(error) {
-      if (error === null) {
-        //console.log("Password changed successfully");
+    $scope.resetUserPW = function() {
+      User.resetUserPW();
+    };
 
-        var title = 'Password changed successfully';
-        var template = '';
-        var logText = "Password changed successfully";
+    $scope.logoutUser = function() {
+      User.logoutUser();
+      //clear Data in Scope
+    };
 
-        $scope.showAlert(title, template, logText);
-
-
-        $scope.user.password = newPW;
-        $scope.user.username = newEmail;
-      } else {
-        var title = 'Error changing password';
-        var template = '';
-        var logText = "Error changing password" + error;
-
-        $scope.showAlert(title, template, logText);
-
-        //console.log("Error changing password:", error);
-      }
-    });
-  }
-
-  $scope.changeEmail = function() {
-    var newEmail = prompt("Set new email", "enter new email here");
-    fb.changeEmail({
-      oldEmail: $scope.user.username,
-      newEmail: newEmail,
-      password: $scope.user.password
-    }, function(error) {
-      if (error === null) {
-        //console.log("Email changed successfully");
-        var title = 'Email changed successfully';
-        var template = '';
-        var logText = "Email changed successfully";
-
-        $scope.showAlert(title, template, logText);
-        $scope.user.username = newEmail;
-
-      } else {
-        //console.log("Error changing email:", error);
-        var title = 'Error changing email';
-        var template = '';
-        var logText = "Error changing email" + error;
-        $scope.showAlert(title, template, logText);
-      }
-    });
-  }
-
-  $scope.resetPW = function() {
-    fb.resetPassword({
-      email: $scope.user.username
-    }, function(error) {
-      if (error === null) {
-        //console.log("Password reset email sent successfully");
-        var title = 'Password reset email sent successfully';
-        var template = '';
-        var logText = "Password reset email sent successfully";
-        $scope.showAlert(title, template, logText);
-      } else {
-        var title = 'Error sending password reset email';
-        var template = '';
-        var logText = "Error sending password reset email" + error;
-        $scope.showAlert(title, template, logText);
-        //console.log("Error sending password reset email:", error);
-      }
-    });
-  }
-
-  $scope.logout = function() {
-    fb.unauth();
-    User.setAuthData(null);
-    //clear Data in Scope
-  }
-
-  /*********************************************
-    RESET USERDATEN(Lokal)
-  *********************************************/
-  $scope.deleteUser = function() {
-      window.localStorage.setItem("username", "");
-      window.localStorage.setItem("password", "");
-      $scope.user.password = "";
-      $scope.user.username = "";
-      //alert("Deleted Logindata");
+    /*********************************************
+      RESET USERDATEN(Lokal)
+    *********************************************/
+    $scope.deleteUser = function() {
+      User.deleteUserData();
 
       var title = 'Deleted Userdata on device';
       var template = '';
       var logText = "Deleted Userdata on device";
       $scope.showAlert(title, template, logText);
-    }
+    };
     /*********************************************
       SAVE USERDATEN (Lokal)
     *********************************************/
-  $scope.saveUser = function() {
+    $scope.saveUser = function() {
       if ($scope.user.username !== null) {
         window.localStorage.setItem("username", $scope.user.username); //sollte auch in store..
       }
@@ -598,17 +334,17 @@ angular.module('starter.controllers', [])
       var template = '';
       var logText = "Saved userdata on device";
       $scope.showAlert(title, template, logText);
-    }
+    };
     /*********************************************
       Login User
     *********************************************/
-  $scope.loginUser = function() {
-      fb.onAuth(authDataCallback);
+    $scope.loginUser = function() {
+      User.loginUser($scope.user.username, $scope.user.password);
 
-      if ($scope.user.username && $scope.user.password) {
-        fb.authWithPassword({
-          email: $scope.user.username,
-          password: $scope.user.password
+
+      /*fb.authWithPassword({
+          email: username,
+          password: password
         }, function(error, authData) {
           if (error) {
             //          alert("Login Failed!", error);
@@ -627,25 +363,21 @@ angular.module('starter.controllers', [])
             User.setAuthData(authData);
           }
         });
-      }else{
+      } else {
         var title = 'No logindata available';
         var template = '';
         var logText = "No logindata available";
         $scope.showAlert(title, template, logText);
-      }
-
-
-    }
+      }*/
+    };
     /*****************************************************
       // Triggered on a button click, or some other target
     *****************************************************/
-  $scope.show = function() {
-    // Show the action sheet
-    var hideSheet = $ionicActionSheet.show({
-
-      titleText: 'Account settings',
-
-      buttons: [{
+    $scope.show = function() {
+      // Show the action sheet
+      var hideSheet = $ionicActionSheet.show({
+        titleText: 'Account settings',
+        buttons: [{
           text: 'Save userdata'
         }, {
           text: 'Change email'
@@ -653,41 +385,38 @@ angular.module('starter.controllers', [])
           text: 'Change password'
         }, {
           text: 'Reset password'
-        }
+        }],
+        destructiveText: 'Delete userdata',
+        destructiveButtonClicked: function() {
+          $scope.deleteUser();
+          return true;
+        },
 
-      ],
-
-      destructiveText: 'Delete userdata',
-      destructiveButtonClicked: function() {
-        $scope.deleteUser();
-        return true;
-      },
-
-      cancelText: 'Cancel',
-      cancel: function() {
-        // add cancel code..
-      },
-      buttonClicked: function(index) {
-        if (index === 0) {
-          $scope.saveUser();
+        cancelText: 'Cancel',
+        cancel: function() {
+          // add cancel code..
+        },
+        buttonClicked: function(index) {
+          if (index === 0) {
+            $scope.saveUser();
+          }
+          if (index === 1) {
+            $scope.changeEmail();
+          }
+          if (index === 2) {
+            $scope.changePW();
+          }
+          if (index === 3) {
+            $scope.resetPW();
+          }
+          return true;
         }
-        if (index === 1) {
-          $scope.changeEmail();
-        }
-        if (index === 2) {
-          $scope.changePW();
-        }
-        if (index === 3) {
-          $scope.resetPW();
-        }
-        return true;
-      }
-    });
+      });
 
-    // For example's sake, hide the sheet after two seconds
-    $timeout(function() {
-      hideSheet();
-    }, 5000);
-  }
+      // For example's sake, hide the sheet after two seconds
+      $timeout(function() {
+        hideSheet();
+      }, 5000);
+    }
 
-});
+  });
