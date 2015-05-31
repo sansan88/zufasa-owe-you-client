@@ -79,7 +79,7 @@ angular.module('starter.services', [])
               };
               showAlert(message);
             }
-          },{remember:"none"});
+          },{remember:"default"});
         } else {
           var message = {
             title: 'No logindata available',
