@@ -1,53 +1,41 @@
 angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope, Pots, User, $state, $timeout, $ionicPopup, $firebaseArray) {
+    //var fbAuth = fb.getAuth();
+    //if (fbAuth) {
+    var data = Pots.getAll();
+    //.$loaded().then(function(data) {
 
-    /*******************************************************/
-    // Globale Funktionen pro controller               START
-    /*******************************************************/
-    $scope.showAlert = function(title, template, logText) {
-      var alertPopup = $ionicPopup.alert({
-        title: title,
-        template: template
-      });
-      alertPopup.then(function(res) {
-        console.log(logText);
-      });
+    /*$scope.noPots = data.length;
+    $scope.noPotItems = 0;
+    $scope.totalSpendingsThisMonth = 0;
+
+    var pots = data;
+    var potItems = [];
+
+    //Loop über Alle Pots
+    for (var i = 0; i < pots.length; i++) {
+      var uR = Pots.get(pots[i].$id); //Get Ref from each pot
+
+      //Position Data
+      var items = $firebaseArray(uR);
+      items.$loaded().then(function(data) { // data = positemarray
+
+        for (var i = 0; i <= data.length; i++) {
+          try {
+            if (data[i].hasOwnProperty("isItem")) { // richtige position?
+              $scope.noPotItems++;
+              $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + data[i].amount;
+            }
+          } catch (err) {
+            console.log("no isItem property");
+          }
+        } //for
+      }); //items loaded
     };
-    // ENDE
-    var fbAuth = fb.getAuth();
-    if (fbAuth) {
-      Pots.getAll().$loaded().then(function(data) {
-
-        $scope.noPots = data.length;
-        $scope.noPotItems = 0;
-        $scope.totalSpendingsThisMonth = 0;
-
-        var pots = data;
-        var potItems = [];
-
-        //Loop über Alle Pots
-        for (var i = 0; i < pots.length; i++) {
-          var uR = Pots.get(pots[i].$id); //Get Ref from each pot
-
-          //Position Data
-          var items = $firebaseArray(uR);
-          items.$loaded().then(function(data) { // data = positemarray
-
-            for (var i = 0; i <= data.length; i++) {
-              try {
-                if (data[i].hasOwnProperty("isItem")) { // richtige position?
-                  $scope.noPotItems++;
-                  $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + data[i].amount;
-                }
-              } catch (err) {
-                console.log("no isItem property");
-              }
-            } //for
-          }); //items loaded
-        };
-      });
-    } else {
+    //});
+    */
+    /*} else {
       //call popup
       // An elaborate, custom popup
       $scope.data = {};
@@ -79,7 +67,7 @@ angular.module('starter.controllers', [])
       $timeout(function() {
         myPopup.close(); //close the popup after 3 seconds for some reason
       }, 20000);
-    };
+    };*/
   })
   //****************************************************************************
   //  CONTROLLER POTS
@@ -102,21 +90,19 @@ angular.module('starter.controllers', [])
     /*******************************************************/
     //init
     /*******************************************************/
-    var ref = Pots.getAll();
-    ref.$loaded().then(function(data) {
-      $scope.pots = data;
-    });
+    $scope.pots = Pots.getAll();
 
     /*******************************************************/
     // View Methoden
     /*******************************************************/
     //Get Data from Store
     $scope.doRefresh = function() {
-      Pots.getNew(fbAuth.uid).$loaded().then(function(data) {
+      $scope.pots = Pots.getNew();
+      /*.$loaded().then(function(data) {
         //$scope.pots = _.uniq($scope.pots, data) ;
         $scope.pots = data;
         $scope.$broadcast('scroll.refreshComplete');
-      });
+      });*/
 
       /*  $scope.$broadcast('scroll.refreshComplete');
         var title = 'Please Login first';
@@ -283,7 +269,7 @@ angular.module('starter.controllers', [])
         title: message.title,
         template: message.template
       }).then(function(res) {
-        console.log(res.logText);
+        console.log(message.logText);
       });
     };
     //ENDE
@@ -366,10 +352,12 @@ angular.module('starter.controllers', [])
       if ($scope.user.budget !== null) {
         window.localStorage.setItem("budget", $scope.user.budget); //sollte auch in store..
       }
-      var title = 'Saved userdata on device';
-      var template = '';
-      var logText = "Saved userdata on device";
-      $scope.showAlert(title, template, logText);
+      var message = {
+        title: 'Saved userdata on device',
+        template: '',
+        logText: "Saved userdata on device"
+      }
+      $scope.showAlert(message);
     };
     /*********************************************
       Login User

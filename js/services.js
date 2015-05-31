@@ -2,7 +2,7 @@ angular.module('starter.services', [])
   //****************************************************************************
   //  USER
   //****************************************************************************
-  .factory('User', function() {
+  .factory('User', ['$timeout', '$ionicPopup', '$firebaseArray', function($timeout, $ionicPopup, $firebaseArray) {
     /*******************************************************/
     // Create a callback which logs the current auth state
     /*******************************************************/
@@ -13,6 +13,20 @@ angular.module('starter.services', [])
         console.log("User is logged out");
       }
     };
+    /*******************************************************/
+    // Globale Funktionen                START
+    /*******************************************************/
+    function showAlert(message) {
+      var alertPopup = $ionicPopup.alert({
+        title: message.title,
+        template: message.template
+      });
+      alertPopup.then(function(res) {
+        console.log(message.logText);
+      });
+    };
+    // ENDE
+    //ENDE
 
     //Public Return Methods
     return {
@@ -61,6 +75,7 @@ angular.module('starter.services', [])
                 template: "",
                 logText: "Login failed" + error
               };
+              showAlert(message);
 
             } else {
               var message = {
@@ -68,7 +83,7 @@ angular.module('starter.services', [])
                 template: "",
                 logText: "Authenticated successfully"
               };
-
+              showAlert(message);
             }
           });
         } else {
@@ -77,7 +92,7 @@ angular.module('starter.services', [])
             template: '',
             logText: "No logindata available"
           };
-          return function(message){};
+          showAlert(message);
         }
       },
       logoutUser: function() {
@@ -92,13 +107,15 @@ angular.module('starter.services', [])
             var title = 'Error creating user:';
             var template = error;
             var logText = "Error creating user:" + error;
-
-            //$scope.showAlert(title, template, logText);
+            showAlert(message);
 
           } else {
-            var title = 'Successfully created user account';
-            var template = '';
-            var logText = "Successfully created user account with uid:" + userData.uid;
+            var message = {
+              title: 'Successfully created user account',
+              template: '',
+              logText: "Successfully created user account with uid:" + userData.uid
+            }
+            showAlert(message);
 
             //$scope.showAlert(title, template, logText);
 
@@ -117,10 +134,12 @@ angular.module('starter.services', [])
         }, function(error) {
           if (error === null) {
             //console.log("Password changed successfully");
-
-            var title = 'Password changed successfully';
-            var template = '';
-            var logText = "Password changed successfully";
+            var message = {
+              title: 'Password changed successfully',
+              template: '',
+              logText: "Password changed successfully"
+            }
+            showAlert(message);
 
             //$scope.showAlert(title, template, logText);
 
@@ -128,9 +147,12 @@ angular.module('starter.services', [])
             //$scope.user.password = newPW;
             //$scope.user.username = newEmail;
           } else {
-            var title = 'Error changing password';
-            var template = '';
-            var logText = "Error changing password" + error;
+            var message = {
+              title: 'Error changing password',
+              template: '',
+              logText: "Error changing password" + error
+            }
+            showAlert(message);
 
             //$scope.showAlert(title, template, logText);
 
@@ -147,18 +169,24 @@ angular.module('starter.services', [])
         }, function(error) {
           if (error === null) {
             //console.log("Email changed successfully");
-            var title = 'Email changed successfully';
-            var template = '';
-            var logText = "Email changed successfully";
+            var message = {
+              title: 'Email changed successfully',
+              template: '',
+              logText: "Email changed successfully"
+            }
+            showAlert(message);
 
             //$scope.showAlert(title, template, logText);
             //$scope.user.username = newEmail;
 
           } else {
             //console.log("Error changing email:", error);
-            var title = 'Error changing email';
-            var template = '';
-            var logText = "Error changing email" + error;
+            var message = {
+              title: 'Error changing email',
+              template: '',
+              logText: "Error changing email" + error
+            }
+            showAlert(message);
             //  $scope.showAlert(title, template, logText);
           }
         });
@@ -189,11 +217,11 @@ angular.module('starter.services', [])
         User.setEmail("");
       }
     }
-  })
+  }])
   //****************************************************************************
   //  POTS
   //****************************************************************************
-  .factory('Pots', ['$firebaseArray', function($firebaseArray) {
+  .factory('Pots', ['$firebaseArray', '$ionicPopup', '$ionicListDelegate', function($firebaseArray, $ionicPopup, $ionicListDelegate) {
 
     //var potsRef = new Firebase('https://zoy-client.firebaseio.com/pots');
 
@@ -203,13 +231,34 @@ angular.module('starter.services', [])
         if (fbAuth) {
           var uR = fb.child("users/" + fbAuth.uid);
           var sync = $firebaseArray(uR.child("pots"));
-          return sync;
+          sync.$loaded().then(function(data) {
+            return data;
+          });
+        } else {
+          var message = {
+            title: 'Please Login first',
+            template: '',
+            logText: "Please Login first"
+          }
+          $scope.showAlert(message);
         }
       },
       getNew: function() {
-        var uR = fb.child("users/" + fbAuth.uid);
-        var sync = $firebaseArray(uR.child("pots"));
-        return sync;
+        var fbAuth = fb.getAuth();
+        if (fbAuth) {
+          var uR = fb.child("users/" + fbAuth.uid);
+          var sync = $firebaseArray(uR.child("pots"));
+          sync.$loaded().then(function(data) {
+            return data;
+          });
+        } else {
+          var message = {
+            title: 'Please Login first',
+            template: '',
+            logText: "Please Login first"
+          }
+          $scope.showAlert(message);
+        }
       },
       get: function(potId) {
         var fbAuth = fb.getAuth();
