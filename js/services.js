@@ -249,9 +249,11 @@ angular.module('starter.services', [])
           var uR = fb.child("users/" + fbAuth.uid);
           var sync = $firebaseArray(uR.child("pots"));
           sync.$loaded().then(function(data) {
-            return data;
+            $scope.pots = data;
+            $scope.$broadcast('scroll.refreshComplete');
           });
         } else {
+          $scope.$broadcast('scroll.refreshComplete');
           var message = {
             title: 'Please Login first',
             template: '',
