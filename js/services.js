@@ -224,14 +224,26 @@ angular.module('starter.services', [])
   .factory('Pots', ['$firebaseArray', '$ionicPopup', '$ionicListDelegate', function($firebaseArray, $ionicPopup, $ionicListDelegate) {
 
     //var potsRef = new Firebase('https://zoy-client.firebaseio.com/pots');
-
+    /*******************************************************/
+    // Globale Funktionen                START
+    /*******************************************************/
+    function showAlert(message) {
+      var alertPopup = $ionicPopup.alert({
+        title: message.title,
+        template: message.template
+      });
+      alertPopup.then(function(res) {
+        console.log(message.logText);
+      });
+    };
+    // ENDE
     return {
       getAll: function() {
         var fbAuth = fb.getAuth();
         if (fbAuth) {
           var uR = fb.child("users/" + fbAuth.uid);
           var sync = $firebaseArray(uR.child("pots"));
-          sync.$loaded().then(function(data) {
+          return sync.$loaded().then(function(data) {
             return data;
           });
         } else {
@@ -240,7 +252,7 @@ angular.module('starter.services', [])
             template: '',
             logText: "Please Login first"
           }
-          $scope.showAlert(message);
+          showAlert(message);
         }
       },
       getNew: function() {
@@ -248,9 +260,9 @@ angular.module('starter.services', [])
         if (fbAuth) {
           var uR = fb.child("users/" + fbAuth.uid);
           var sync = $firebaseArray(uR.child("pots"));
-          sync.$loaded().then(function(data) {
-            $scope.pots = data;
+          return sync.$loaded().then(function(data) {
             $scope.$broadcast('scroll.refreshComplete');
+            return data;
           });
         } else {
           $scope.$broadcast('scroll.refreshComplete');
@@ -259,7 +271,7 @@ angular.module('starter.services', [])
             template: '',
             logText: "Please Login first"
           }
-          $scope.showAlert(message);
+          showAlert(message);
         }
       },
       get: function(potId) {

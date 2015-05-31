@@ -3,7 +3,10 @@ angular.module('starter.controllers', [])
 .controller('DashCtrl', function($scope, Pots, User, $state, $timeout, $ionicPopup, $firebaseArray) {
     //var fbAuth = fb.getAuth();
     //if (fbAuth) {
-    var data = Pots.getAll();
+    Pots.getAll().then(function(data) {
+      $scope.pots = data;
+    });
+
     //.$loaded().then(function(data) {
 
     /*$scope.noPots = data.length;
@@ -90,14 +93,18 @@ angular.module('starter.controllers', [])
     /*******************************************************/
     //init
     /*******************************************************/
-    $scope.pots = Pots.getAll();
+    Pots.getAll().then(function(data) {
+      $scope.pots = data;
+    });
 
     /*******************************************************/
     // View Methoden
     /*******************************************************/
     //Get Data from Store
     $scope.doRefresh = function() {
-      $scope.pots = Pots.getNew();
+      Pots.getNew().then(function(data) {
+        $scope.pots = data;
+      });
       /*.$loaded().then(function(data) {
         //$scope.pots = _.uniq($scope.pots, data) ;
         $scope.pots = data;
