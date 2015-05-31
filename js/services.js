@@ -221,10 +221,10 @@ angular.module('starter.services', [])
   //****************************************************************************
   //  POTS
   //****************************************************************************
-  .factory('Pots', ['$firebaseArray', '$ionicPopup', '$ionicListDelegate', function($firebaseArray, $ionicPopup, $ionicListDelegate) {
+  .factory('Pots', ['$firebaseArray', '$firebaseObject', '$ionicPopup', '$ionicListDelegate', function($firebaseArray, $firebaseObject, $ionicPopup, $ionicListDelegate) {
     return {
       getAll: function(uid) {
-        var uR = fb.child("users/" +uid);
+        var uR = fb.child("users/" + uid);
         var sync = $firebaseArray(uR.child("pots"));
         return sync.$loaded().then(function(data) {
           return data;
@@ -238,14 +238,22 @@ angular.module('starter.services', [])
           return data;
         });
       },
-      get: function(potId, uid) {
-
+      getItemObject: function(potId, uid) {
         console.log("call Pots.get() for more details with Pot ID: " + potId);
         var uR = fb.child("users/" + uid + "/pots/" + potId);
-        var items = $firebaseArray(uR);
-        return items.$loaded().then(function(data) { // data = positemarray
+        var itemObj = $firebaseObject(uR);
+        return itemObj.$loaded().then(function(data) { // data = positemarray
           return data;
-        }); //items loaded
+        });
+
+      },
+      getItemArray: function(potId, uid) {
+        console.log("call Pots.get() for more details with Pot ID: " + potId);
+        var uR = fb.child("users/" + uid + "/pots/" + potId);
+        var itemArray = $firebaseArray(uR);
+        return itemArray.$loaded().then(function(data) { // data = positemarray
+          return data;
+        });
 
       },
       add: function(pot) {

@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope, Pots, User, $state, $timeout, $ionicPopup, $firebaseArray) {
+.controller('DashCtrl', function($scope, Pots, User, $state, $ionicPopup, $firebaseArray) {
     /*******************************************************/
     // Globale Funktionen                START
     /*******************************************************/
@@ -31,7 +31,7 @@ angular.module('starter.controllers', [])
         //Loop über Alle Pots
         for (var i = 0; i < pots.length; i++) {
           //Position Data
-          Pots.get(pots[i].$id).then(function(data) {
+          Pots.getItemArray(pots[i].$id).then(function(data) {
             for (var i = 0; i <= data.length; i++) {
               try {
                 if (data[i].hasOwnProperty("isItem")) { // richtige position?
@@ -222,14 +222,30 @@ angular.module('starter.controllers', [])
 //****************************************************************************
 //  CONTROLLER POTS DETAIL
 //****************************************************************************
-.controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots, $firebaseArray, $firebaseObject) {
-
+.controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots, $firebaseArray, $firebaseObject, $ionicPopup) {
+    /*******************************************************/
+    // Globale Funktionen pro controller               START
+    /*******************************************************/
+    showAlert = function(message) {
+      var alertPopup = $ionicPopup.alert({
+        title: message.title,
+        template: message.template
+      });
+      alertPopup.then(function(res) {
+        console.log(message.logText);
+      });
+    };
+    //   ENDE
     var fbAuth = fb.getAuth();
     if (fbAuth) {
-      Pots.get(pots[i].$id).then(function(data) {
+      Pots.getItemObject($stateParams.potId, fbAuth.uid).then(function(data) {
+        $scope.pot = data; //Kopfdaten
+      }); //Get Ref from each pot
 
-        $scope.pot = data;
+      Pots.getItemArray($stateParams.potId, fbAuth.uid).then(function(data) {
+
         $scope.pot.items = [];
+        $scope.pot.amount = 0;
 
         for (var i = 0; i <= data.length; i++) {
           try {
@@ -241,7 +257,9 @@ angular.module('starter.controllers', [])
             console.log("no isItem property");
           }
         } //for
-      }); //Get Ref from each pot
+
+      });
+
 
     } else {
       var message = {
@@ -273,7 +291,7 @@ angular.module('starter.controllers', [])
         var title = 'No values provided';
         var template = '';
         var logText = "No values provided";
-        $scope.showAlert(title, template, logText);
+        showAlert(title, template, logText);
       }
     };
     $scope.openModal = function() {
@@ -307,7 +325,7 @@ angular.module('starter.controllers', [])
   //****************************************************************************
   //  CONTROLLER ACCOUNT
   //****************************************************************************
-  .controller('AccountCtrl', function($scope, User, $ionicActionSheet, $timeout, $state, $firebaseAuth, $ionicPopup) {
+  .controller('AccountCtrl', function($scope, User, $ionicActionSheet, $state, $firebaseAuth, $ionicPopup) {
 
     //init
     $scope.user = User.getUser(); //Get User Data
@@ -355,9 +373,6 @@ angular.module('starter.controllers', [])
           User.registerUser(res)
         };
       });
-      $timeout(function() {
-        myPopup.close(); //close the popup after 3 seconds for some reason
-      }, 30000);
     };
 
     $scope.changeUserPassword = function() {
@@ -487,11 +502,6 @@ angular.module('starter.controllers', [])
           return true;
         }
       });
-
-      // For example's sake, hide the sheet after two seconds
-      $timeout(function() {
-        hideSheet();
-      }, 5000);
     }
 
   });
