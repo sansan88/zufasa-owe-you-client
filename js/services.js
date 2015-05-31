@@ -222,66 +222,30 @@ angular.module('starter.services', [])
   //  POTS
   //****************************************************************************
   .factory('Pots', ['$firebaseArray', '$ionicPopup', '$ionicListDelegate', function($firebaseArray, $ionicPopup, $ionicListDelegate) {
-
-    //var potsRef = new Firebase('https://zoy-client.firebaseio.com/pots');
-    /*******************************************************/
-    // Globale Funktionen                START
-    /*******************************************************/
-    function showAlert(message) {
-      var alertPopup = $ionicPopup.alert({
-        title: message.title,
-        template: message.template
-      });
-      alertPopup.then(function(res) {
-        console.log(message.logText);
-      });
-    };
-    // ENDE
     return {
-      getAll: function() {
-        var fbAuth = fb.getAuth();
-        if (fbAuth) {
-          var uR = fb.child("users/" + fbAuth.uid);
-          var sync = $firebaseArray(uR.child("pots"));
-          return sync.$loaded().then(function(data) {
-            return data;
-          });
-        } else {
-          var message = {
-            title: 'Please Login first',
-            template: '',
-            logText: "Please Login first"
-          }
-          showAlert(message);
-        }
+      getAll: function(uid) {
+        var uR = fb.child("users/" +uid);
+        var sync = $firebaseArray(uR.child("pots"));
+        return sync.$loaded().then(function(data) {
+          return data;
+        });
       },
-      getNew: function() {
-        var fbAuth = fb.getAuth();
-        if (fbAuth) {
-          var uR = fb.child("users/" + fbAuth.uid);
-          var sync = $firebaseArray(uR.child("pots"));
-          return sync.$loaded().then(function(data) {
-            $scope.$broadcast('scroll.refreshComplete');
-            return data;
-          });
-        } else {
+      getNew: function(uid) {
+        var uR = fb.child("users/" + uid);
+        var sync = $firebaseArray(uR.child("pots"));
+        return sync.$loaded().then(function(data) {
           $scope.$broadcast('scroll.refreshComplete');
-          var message = {
-            title: 'Please Login first',
-            template: '',
-            logText: "Please Login first"
-          }
-          showAlert(message);
-        }
+          return data;
+        });
       },
-      get: function(potId) {
-        var fbAuth = fb.getAuth();
-        if (fbAuth) {
-          console.log("call Pots.get() for more details with Pot ID: " + potId);
-          //          var authData = JSON.parse(window.localStorage.getItem("authData"));
-          var uR = fb.child("users/" + fbAuth.uid + "/pots/" + potId);
-          return uR;
-        }
+      get: function(potId, uid) {
+
+        console.log("call Pots.get() for more details with Pot ID: " + potId);
+        var uR = fb.child("users/" + uid + "/pots/" + potId);
+        var items = $firebaseArray(uR);
+        return items.$loaded().then(function(data) { // data = positemarray
+          return data;
+        }); //items loaded
 
       },
       add: function(pot) {

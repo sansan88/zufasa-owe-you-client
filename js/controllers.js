@@ -1,76 +1,92 @@
 angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope, Pots, User, $state, $timeout, $ionicPopup, $firebaseArray) {
-    //var fbAuth = fb.getAuth();
-    //if (fbAuth) {
-    Pots.getAll().then(function(data) {
-      $scope.pots = data;
-    });
-
-    //.$loaded().then(function(data) {
-
-    /*$scope.noPots = data.length;
-    $scope.noPotItems = 0;
-    $scope.totalSpendingsThisMonth = 0;
-
-    var pots = data;
-    var potItems = [];
-
-    //Loop über Alle Pots
-    for (var i = 0; i < pots.length; i++) {
-      var uR = Pots.get(pots[i].$id); //Get Ref from each pot
-
-      //Position Data
-      var items = $firebaseArray(uR);
-      items.$loaded().then(function(data) { // data = positemarray
-
-        for (var i = 0; i <= data.length; i++) {
-          try {
-            if (data[i].hasOwnProperty("isItem")) { // richtige position?
-              $scope.noPotItems++;
-              $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + data[i].amount;
-            }
-          } catch (err) {
-            console.log("no isItem property");
-          }
-        } //for
-      }); //items loaded
+    /*******************************************************/
+    // Globale Funktionen                START
+    /*******************************************************/
+    function showAlert(message) {
+      var alertPopup = $ionicPopup.alert({
+        title: message.title,
+        template: message.template
+      });
+      alertPopup.then(function(res) {
+        console.log(message.logText);
+      });
     };
-    //});
-    */
-    /*} else {
-      //call popup
-      // An elaborate, custom popup
-      $scope.data = {};
-      var myPopup = $ionicPopup.show({
-        template: '<label>Username:</label><input type="email" ng-model="data.username"><label>Password:</label><input type="password" ng-model="data.password">',
-        title: 'Enter Logindata',
-        subTitle: 'Please use normal things',
-        scope: $scope,
-        buttons: [{
-          text: 'Cancel'
-        }, {
-          text: '<b>Login</b>',
-          type: 'button-positive',
-          onTap: function(e) {
-            if (!$scope.data.username || !$scope.data.password) {
-              //don't allow the user to close unless he enters wifi password
-              e.preventDefault();
-            } else {
-              return $scope.data;
-            }
+    // ENDE
+
+    //Check auth
+    var fbAuth = fb.getAuth();
+    if (fbAuth) {
+      Pots.getAll(fbAuth.uid).then(function(data) {
+        $scope.pots = data;
+
+        $scope.noPots = data.length;
+        $scope.noPotItems = 0;
+        $scope.totalSpendingsThisMonth = 0;
+
+        var pots = data;
+        var potItems = [];
+
+        //Loop über Alle Pots
+        for (var i = 0; i < pots.length; i++) {
+          //Position Data
+          Pots.get(pots[i].$id).then(function(data) {
+            for (var i = 0; i <= data.length; i++) {
+              try {
+                if (data[i].hasOwnProperty("isItem")) { // richtige position?
+                  $scope.noPotItems++;
+                  $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + data[i].amount;
+                }
+              } catch (err) {
+                console.log("no isItem property");
+              }
+            } //for
+          }); //Get Ref from each pot
+        };
+      });
+    } else {
+      var message = {
+        title: 'Please Login first',
+        template: '',
+        logText: "Please Login first"
+      }
+      showAlert(message);
+      $state.go('tab.account');
+    }
+
+    // Code mal noch beahlten!!!!!
+    /*
+    $scope.data = {};
+    var myPopup = $ionicPopup.show({
+      template: '<label>Username:</label><input type="email" ng-model="data.username"><label>Password:</label><input type="password" ng-model="data.password">',
+      title: 'Enter Logindata',
+      subTitle: 'Please use normal things',
+      scope: $scope,
+      buttons: [{
+        text: 'Cancel'
+      }, {
+        text: '<b>Login</b>',
+        type: 'button-positive',
+        onTap: function(e) {
+          if (!$scope.data.username || !$scope.data.password) {
+            //don't allow the user to close unless he enters wifi password
+            e.preventDefault();
+          } else {
+            return $scope.data;
           }
-        }]
-      });
-      myPopup.then(function(res) {
-        console.log('Tapped!', res);
-        User.loginUser(res.username, res.password);
-        $state.go("dash");
-      });
-      $timeout(function() {
-        myPopup.close(); //close the popup after 3 seconds for some reason
-      }, 20000);
-    };*/
+        }
+      }]
+    });
+    myPopup.then(function(res) {
+      console.log('Tapped!', res);
+      User.loginUser(res.username, res.password);
+      $state.go("dash");
+    });
+    $timeout(function() {
+      myPopup.close(); //close the popup after 3 seconds for some reason
+    }, 20000);*/
+
   })
   //****************************************************************************
   //  CONTROLLER POTS
@@ -79,13 +95,13 @@ angular.module('starter.controllers', [])
     /*******************************************************/
     // Globale Funktionen pro controller               START
     /*******************************************************/
-    $scope.showAlert = function(title, template, logText) {
+    showAlert = function(message) {
       var alertPopup = $ionicPopup.alert({
-        title: title,
-        template: template
+        title: message.title,
+        template: message.template
       });
       alertPopup.then(function(res) {
-        console.log(logText);
+        console.log(message.logText);
       });
     };
     //   ENDE
@@ -93,18 +109,43 @@ angular.module('starter.controllers', [])
     /*******************************************************/
     //init
     /*******************************************************/
-    Pots.getAll().then(function(data) {
-      $scope.pots = data;
-    });
+    var fbAuth = fb.getAuth();
+    if (fbAuth) {
+      Pots.getAll(fbAuth.uid).then(function(data) {
+        $scope.pots = data;
+      });
+
+    } else {
+      var message = {
+        title: 'Please Login first',
+        template: '',
+        logText: "Please Login first"
+      }
+      showAlert(message);
+      $state.go('tab.account');
+    }
 
     /*******************************************************/
     // View Methoden
     /*******************************************************/
     //Get Data from Store
     $scope.doRefresh = function() {
-      Pots.getNew().then(function(data) {
-        $scope.pots = data;
-      });
+      if (fbAuth) {
+
+        Pots.getNew(fbAuth.uid).then(function(data) {
+          $scope.pots = data;
+        });
+
+      } else {
+        var message = {
+          title: 'Please Login first',
+          template: '',
+          logText: "Please Login first"
+        }
+        showAlert(message);
+        $state.go('tab.account');
+      }
+
       /*.$loaded().then(function(data) {
         //$scope.pots = _.uniq($scope.pots, data) ;
         $scope.pots = data;
@@ -183,31 +224,34 @@ angular.module('starter.controllers', [])
 //****************************************************************************
 .controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots, $firebaseArray, $firebaseObject) {
 
-    //init
-    var uR = Pots.get($stateParams.potId);
-    //Header Data
-    var daten = $firebaseObject(uR);
-    daten.$loaded().then(function(sync) {
-      $scope.pot = sync;
-      $scope.pot.items = [];
+    var fbAuth = fb.getAuth();
+    if (fbAuth) {
+      Pots.get(pots[i].$id).then(function(data) {
 
-      //Position Data
-      var items = $firebaseArray(uR);
-      items.$loaded().then(function(data) {
+        $scope.pot = data;
+        $scope.pot.items = [];
 
         for (var i = 0; i <= data.length; i++) {
           try {
-            if (data[i].hasOwnProperty("isItem")) {
+            if (data[i].hasOwnProperty("isItem")) { // richtige position?
               $scope.pot.items.push(data[i]);
               $scope.pot.amount = $scope.pot.amount + data[i].amount;
             }
           } catch (err) {
             console.log("no isItem property");
           }
-        }
+        } //for
+      }); //Get Ref from each pot
 
-      });
-    });
+    } else {
+      var message = {
+        title: 'Please Login first',
+        template: '',
+        logText: "Please Login first"
+      }
+      showAlert(message);
+      $state.go('tab.account');
+    }
     /******************************************************/
     //  Modal Pot Item
     /******************************************************/
