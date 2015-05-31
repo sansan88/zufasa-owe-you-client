@@ -1,6 +1,7 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope, Pots, User, $state, $ionicPopup, $firebaseArray) {
+.controller('DashCtrl', function($scope, Pots, User, $state, $ionicPopup, $firebaseArray, $firebaseAuth) {
+    console.log("Dash Ctrl");
     /*******************************************************/
     // Globale Funktionen                START
     /*******************************************************/
@@ -15,10 +16,11 @@ angular.module('starter.controllers', [])
     };
     // ENDE
 
-    //Check auth
     var fbAuth = fb.getAuth();
     if (fbAuth) {
       Pots.getAll(fbAuth.uid).then(function(data) {
+        //data.$bindTo($scope, "pots");
+
         $scope.pots = data;
 
         $scope.noPots = data.length;
@@ -92,6 +94,8 @@ angular.module('starter.controllers', [])
   //  CONTROLLER POTS
   //****************************************************************************
   .controller('PotsCtrl', function($scope, Pots, $ionicModal, $state, $ionicListDelegate, $ionicPopup) {
+    console.log("Pots Ctrl");
+
     /*******************************************************/
     // Globale Funktionen pro controller               START
     /*******************************************************/
@@ -145,19 +149,6 @@ angular.module('starter.controllers', [])
         showAlert(message);
         $state.go('tab.account');
       }
-
-      /*.$loaded().then(function(data) {
-        //$scope.pots = _.uniq($scope.pots, data) ;
-        $scope.pots = data;
-        $scope.$broadcast('scroll.refreshComplete');
-      });*/
-
-      /*  $scope.$broadcast('scroll.refreshComplete');
-        var title = 'Please Login first';
-        var template = '';
-        var logText = "Please Login first";
-        $scope.showAlert(title, template, logText);*/
-      //$state.go("tab.account");
     };
 
     $scope.addPot = function() { //Pots.add();
@@ -223,6 +214,7 @@ angular.module('starter.controllers', [])
 //  CONTROLLER POTS DETAIL
 //****************************************************************************
 .controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots, $firebaseArray, $firebaseObject, $ionicPopup) {
+    console.log("Pots Detail Ctrl");
     /*******************************************************/
     // Globale Funktionen pro controller               START
     /*******************************************************/
@@ -326,7 +318,7 @@ angular.module('starter.controllers', [])
   //  CONTROLLER ACCOUNT
   //****************************************************************************
   .controller('AccountCtrl', function($scope, User, $ionicActionSheet, $state, $firebaseAuth, $ionicPopup) {
-
+    console.log("Account Ctrl");
     //init
     $scope.user = User.getUser(); //Get User Data
 
@@ -418,6 +410,17 @@ angular.module('starter.controllers', [])
       if ($scope.user.budget !== null) {
         window.localStorage.setItem("budget", $scope.user.budget); //sollte auch in store..
       }
+      var authData = fb.getAuth();
+      if (authData && isNewUser) {
+        // save the user's profile into Firebase so we can list users,
+        // use them in Security and Firebase Rules, and show profiles
+        fb.child("users").child(authData.uid).set({
+          provider: authData.provider,
+          name: User.getUsername()
+        });
+        isNewUser = false;
+      }
+
       var message = {
         title: 'Saved userdata on device',
         template: '',

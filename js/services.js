@@ -6,13 +6,7 @@ angular.module('starter.services', [])
     /*******************************************************/
     // Create a callback which logs the current auth state
     /*******************************************************/
-    function authDataCallback(authData) {
-      if (authData) {
-        console.log("User " + authData.uid + " is logged in with " + authData.provider);
-      } else {
-        console.log("User is logged out");
-      }
-    };
+
     /*******************************************************/
     // Globale Funktionen                START
     /*******************************************************/
@@ -85,7 +79,7 @@ angular.module('starter.services', [])
               };
               showAlert(message);
             }
-          });
+          },{remember:"none"});
         } else {
           var message = {
             title: 'No logindata available',
@@ -96,7 +90,17 @@ angular.module('starter.services', [])
         }
       },
       logoutUser: function() {
-        fb.unauth();
+        try {
+          fb.unauth();
+        } catch (error) {
+          console.log(error);
+        }
+        var message = {
+          title: 'Successfully logged user out',
+          template: '',
+          logText: "Successfully logged user out"
+        }
+        showAlert(message);
       },
       registerUser: function(register) {
         fb.createUser({

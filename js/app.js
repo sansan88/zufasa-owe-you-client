@@ -1,4 +1,14 @@
+var isNewUser = true;
 var fb = new Firebase("https://zoy-client.firebaseio.com/");
+
+function authDataCallback(authData) {
+  if (authData) {
+    console.log("User " + authData.uid + " is logged in with " + authData.provider);
+  } else {
+    console.log("User is logged out");
+  }
+}
+fb.onAuth(authDataCallback);
 
 // Ionic Starter App
 
