@@ -15,71 +15,76 @@ angular.module('starter.controllers', [])
       });
     };
     // ENDE
+    function getData() {
+      var fbAuth = fb.getAuth();
+      if (fbAuth) {
+        Pots.getAll(fbAuth.uid).then(function(data) {
+          //data.$bindTo($scope, "pots");
 
-    var fbAuth = fb.getAuth();
-    if (fbAuth) {
-      Pots.getAll(fbAuth.uid).then(function(data) {
-        //data.$bindTo($scope, "pots");
+          $scope.pots = data;
 
-        $scope.pots = data;
+          $scope.noPots = data.length;
+          $scope.noPotItems = 0;
+          $scope.totalSpendingsThisMonth = 0;
 
-        $scope.noPots = data.length;
-        $scope.noPotItems = 0;
-        $scope.totalSpendingsThisMonth = 0;
+          var pots = data;
+          var potItems = [];
 
-        var pots = data;
-        var potItems = [];
-
-        //Loop über Alle Pots
-        for (var i = 0; i < pots.length; i++) {
-          //Position Data
-          Pots.getItemArray(pots[i].$id).then(function(data) {
-            for (var i = 0; i <= data.length; i++) {
-              try {
-                if (data[i].hasOwnProperty("isItem")) { // richtige position?
-                  $scope.noPotItems++;
-                  $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + data[i].amount;
+          //Loop über Alle Pots
+          for (var i = 0; i < pots.length; i++) {
+            //Position Data
+            Pots.getItemArray(pots[i].$id).then(function(data) {
+              for (var i = 0; i <= data.length; i++) {
+                try {
+                  if (data[i].hasOwnProperty("isItem")) { // richtige position?
+                    $scope.noPotItems++;
+                    $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + data[i].amount;
+                  }
+                } catch (err) {
+                  console.log("no isItem property");
                 }
-              } catch (err) {
-                console.log("no isItem property");
-              }
-            } //for
-          }); //Get Ref from each pot
-        };
-      });
-    } else {
-      var message = {
-        title: 'Please Login first',
-        template: '',
-        logText: "Please Login first"
+              } //for
+            }); //Get Ref from each pot
+          };
+        });
+      } else {
+        var message = {
+          title: 'Please Login first',
+          template: '',
+          logText: "Please Login first"
+        }
+        showAlert(message);
+        $state.go('tab.account');
       }
-      showAlert(message);
-      $state.go('tab.account');
-    }
 
-    var ctx = document.getElementById("myChart").getContext("2d");
-    var data = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
-    datasets: [
-        {
+      var chart = document.getElementById("myChart");
+      if (chart) {
+        var ctx = chart.getContext("2d");
+        var data = {
+          labels: ["January", "February", "March", "April", "May", "June", "July"],
+          datasets: [{
             label: "My First dataset",
             fillColor: "rgba(220,220,220,0.5)",
             strokeColor: "rgba(220,220,220,0.8)",
             highlightFill: "rgba(220,220,220,0.75)",
             highlightStroke: "rgba(220,220,220,1)",
             data: [65, 59, 80, 81, 56, 55, 40]
-        },
-        {
+          }, {
             label: "My Second dataset",
             fillColor: "rgba(151,187,205,0.5)",
             strokeColor: "rgba(151,187,205,0.8)",
             highlightFill: "rgba(151,187,205,0.75)",
             highlightStroke: "rgba(151,187,205,1)",
             data: [28, 48, 40, 19, 86, 27, 90]
-        }
-    ]
-};
-    var myBarChart = new Chart(ctx).Bar(data);
+          }]
+        };
+        var myBarChart = new Chart(ctx).Bar(data);
+      }
+    };
+
+    $scope.refresh = function(){
+      getData();
+    }
     // Code mal noch beahlten!!!!!
     /*
     $scope.data = {};
