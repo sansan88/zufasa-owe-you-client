@@ -35,8 +35,20 @@ angular.module('starter.services', [])
           Number.parseInt(window.localStorage.setItem("budget"), budget);
         }
       },
+      setFirstname: function(firstname) {
+        return window.localStorage.setItem("firstname", firstname);
+      },
+      setName: function(name) {
+        return window.localStorage.setItem("name", name);
+      },
       getUsername: function() {
         return window.localStorage.getItem("username");
+      },
+      getFirstname: function() {
+        return window.localStorage.getItem("firstname");
+      },
+      getName: function() {
+        return window.localStorage.getItem("name");
       },
       getPassword: function() {
         return window.localStorage.getItem("password");
@@ -53,7 +65,9 @@ angular.module('starter.services', [])
         var user = {
           username: this.getUsername(),
           password: this.getPassword(),
-          budget: this.getBudget()
+          budget: this.getBudget(),
+          name: this.getName(),
+          firstname: this.getFirstname()
         };
         return user;
       },
@@ -61,6 +75,8 @@ angular.module('starter.services', [])
         this.setUsername(user.username);
         this.setPassword(user.password);
         this.setBudget(user.budget);
+        this.setName(user.name);
+        this.setFirstname(user.firstname);
       },
 
       loginUser: function(username, password) {

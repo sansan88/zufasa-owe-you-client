@@ -404,6 +404,9 @@ angular.module('starter.controllers', [])
       SAVE USERDATEN (Lokal)
     *********************************************/
     $scope.saveUser = function() {
+
+      User.setUser($scope.user);
+/*
       if ($scope.user.username !== null) {
         window.localStorage.setItem("username", $scope.user.username); //sollte auch in store..
       }
@@ -412,14 +415,17 @@ angular.module('starter.controllers', [])
       }
       if ($scope.user.budget !== null) {
         window.localStorage.setItem("budget", $scope.user.budget); //sollte auch in store..
-      }
+      }*/
       var authData = fb.getAuth();
       if (authData && isNewUser) {
         // save the user's profile into Firebase so we can list users,
         // use them in Security and Firebase Rules, and show profiles
         fb.child("users").child(authData.uid).set({
           provider: authData.provider,
-          name: User.getUsername()
+          username: User.getUsername(),
+          name: User.getName(),
+          firstname: User.getFirstname()
+
         });
         isNewUser = false;
       }

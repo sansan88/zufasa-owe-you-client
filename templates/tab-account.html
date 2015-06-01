@@ -8,6 +8,7 @@
   <ion-content>
     <div>
       <div class="list list-inset">
+        <h3>Account</h3>
         <label class="item item-input">
           <input ng-model="user.username" type="email" placeholder="Username" />
         </label>
@@ -26,8 +27,17 @@
         </div>
       </div>
       <div class="list list-inset">
+        <h3>Financials</h3>
         <label class="item item-input">
           <input ng-model="user.budget" type="number" placeholder="Budget" />
+        </label>
+
+        <h3>Profile Details</h3>
+        <label class="item item-input">
+          <input ng-model="user.firstname" type="text" placeholder="First Name" />
+        </label>
+        <label class="item item-input">
+          <input ng-model="user.name" type="text" placeholder="Name" />
         </label>
       </div>
     </div>
