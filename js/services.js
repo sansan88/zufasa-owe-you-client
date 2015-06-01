@@ -263,7 +263,7 @@ angular.module('starter.services', [])
         var uR = fb.child("users/" + uid);
         var sync = $firebaseArray(uR.child("pots"));
         return sync.$loaded().then(function(data) {
-          $scope.$broadcast('scroll.refreshComplete');
+          //$scope.$broadcast('scroll.refreshComplete');
           return data;
         });
       },

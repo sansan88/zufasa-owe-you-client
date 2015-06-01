@@ -158,12 +158,13 @@ angular.module('starter.controllers', [])
     //Get Data from Store
     $scope.doRefresh = function() {
       if (fbAuth) {
-
         Pots.getNew(fbAuth.uid).then(function(data) {
           $scope.pots = data;
+          $scope.$broadcast('scroll.refreshComplete');
         });
 
       } else {
+        $scope.$broadcast('scroll.refreshComplete');
         var message = {
           title: 'Please Login first',
           template: '',
