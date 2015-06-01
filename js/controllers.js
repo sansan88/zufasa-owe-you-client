@@ -321,6 +321,9 @@ angular.module('starter.controllers', [])
     console.log("Account Ctrl");
     //init
     $scope.user = User.getUser(); //Get User Data
+    $scope.register = {};
+    $scope.register.username = "";
+    $scope.register.password = "";
 
     /*******************************************************/
     // Globale Funktionen pro controller               START
@@ -340,7 +343,7 @@ angular.module('starter.controllers', [])
     /**********************************************/
     $scope.registerUser = function() {
       var myPopup = $ionicPopup.show({
-        template: '<label>Email:</label><input type="email" ng-model="register.username"><br><label>Password:</label><input type="password" ng-model="register.password">',
+        template: '<label>Email:</label><input type="email" ng-model="register.username" ng-model-instant><br><label>Password:</label><input type="password" ng-model="register.password" ng-model-instant>',
         title: 'Enter Username and Password',
         subTitle: 'Please use normal things',
         scope: $scope,
