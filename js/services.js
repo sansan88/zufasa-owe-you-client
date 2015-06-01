@@ -31,7 +31,9 @@ angular.module('starter.services', [])
         window.localStorage.setItem("password", password);
       },
       setBudget: function(budget) {
-        Number.parseInt(window.localStorage.setItem("budget"), budget);
+        if (!budget == undefined) {
+          Number.parseInt(window.localStorage.setItem("budget"), budget);
+        }
       },
       getUsername: function() {
         return window.localStorage.getItem("username");
@@ -40,7 +42,12 @@ angular.module('starter.services', [])
         return window.localStorage.getItem("password");
       },
       getBudget: function() {
-        return Number.parseInt(window.localStorage.getItem("budget"));
+        var budget = window.localStorage.getItem("budget");
+        if (!budget == undefined){
+          return Number.parseInt(window.localStorage.getItem("budget"));
+        }else{
+          return 0;
+        }
       },
       getUser: function() {
         var user = {
@@ -79,7 +86,9 @@ angular.module('starter.services', [])
               };
               showAlert(message);
             }
-          },{remember:"default"});
+          }, {
+            remember: "default"
+          });
         } else {
           var message = {
             title: 'No logindata available',
