@@ -33,12 +33,12 @@ angular.module('starter.controllers', [])
           //Loop über Alle Pots
           for (var i = 0; i < pots.length; i++) {
             //Position Data
-            Pots.getItemArray(pots[i].$id).then(function(data) {
-              for (var i = 0; i <= data.length; i++) {
+            Pots.getItemArray(pots[i].$id).then(function(items) {
+              for (var i = 0; i <= items.length; i++) {
                 try {
-                  if (data[i].hasOwnProperty("isItem")) { // richtige position?
+                  if (items[i].hasOwnProperty("isItem")) { // richtige position?
                     $scope.noPotItems++;
-                    $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + data[i].amount;
+                    $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + items[i].amount;
                   }
                 } catch (err) {
                   console.log("no isItem property");
