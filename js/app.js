@@ -1,4 +1,3 @@
-var isNewUser = true;
 var fb = new Firebase("https://zoy-client.firebaseio.com/");
 
 function authDataCallback(authData) {

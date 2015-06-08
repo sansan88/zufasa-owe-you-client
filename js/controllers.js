@@ -82,40 +82,40 @@ angular.module('starter.controllers', [])
       }
     };
 
-    $scope.refresh = function(){
-      getData();
-    }
-    // Code mal noch beahlten!!!!!
-    /*
-    $scope.data = {};
-    var myPopup = $ionicPopup.show({
-      template: '<label>Username:</label><input type="email" ng-model="data.username"><label>Password:</label><input type="password" ng-model="data.password">',
-      title: 'Enter Logindata',
-      subTitle: 'Please use normal things',
-      scope: $scope,
-      buttons: [{
-        text: 'Cancel'
-      }, {
-        text: '<b>Login</b>',
-        type: 'button-positive',
-        onTap: function(e) {
-          if (!$scope.data.username || !$scope.data.password) {
-            //don't allow the user to close unless he enters wifi password
-            e.preventDefault();
-          } else {
-            return $scope.data;
+    $scope.refresh = function() {
+        getData();
+      }
+      // Code mal noch beahlten!!!!!
+      /*
+      $scope.data = {};
+      var myPopup = $ionicPopup.show({
+        template: '<label>Username:</label><input type="email" ng-model="data.username"><label>Password:</label><input type="password" ng-model="data.password">',
+        title: 'Enter Logindata',
+        subTitle: 'Please use normal things',
+        scope: $scope,
+        buttons: [{
+          text: 'Cancel'
+        }, {
+          text: '<b>Login</b>',
+          type: 'button-positive',
+          onTap: function(e) {
+            if (!$scope.data.username || !$scope.data.password) {
+              //don't allow the user to close unless he enters wifi password
+              e.preventDefault();
+            } else {
+              return $scope.data;
+            }
           }
-        }
-      }]
-    });
-    myPopup.then(function(res) {
-      console.log('Tapped!', res);
-      User.loginUser(res.username, res.password);
-      $state.go("dash");
-    });
-    $timeout(function() {
-      myPopup.close(); //close the popup after 3 seconds for some reason
-    }, 20000);*/
+        }]
+      });
+      myPopup.then(function(res) {
+        console.log('Tapped!', res);
+        User.loginUser(res.username, res.password);
+        $state.go("dash");
+      });
+      $timeout(function() {
+        myPopup.close(); //close the popup after 3 seconds for some reason
+      }, 20000);*/
 
   })
   //****************************************************************************
@@ -446,17 +446,17 @@ angular.module('starter.controllers', [])
               window.localStorage.setItem("budget", $scope.user.budget); //sollte auch in store..
             }*/
       var authData = fb.getAuth();
-      if (authData && isNewUser) {
+      if (authData) {
         // save the user's profile into Firebase so we can list users,
         // use them in Security and Firebase Rules, and show profiles
-        fb.child("users").child(authData.uid).set({
+
+        fb.child("users").child(authData.uid + '/userData').set({
           provider: authData.provider,
           username: User.getUsername(),
           name: User.getName(),
           firstname: User.getFirstname()
 
         });
-        isNewUser = false;
       }
 
       var message = {
