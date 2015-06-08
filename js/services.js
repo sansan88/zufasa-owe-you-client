@@ -62,9 +62,9 @@ angular.module('starter.services', [])
       },
       getBudget: function() {
         var budget = window.localStorage.getItem("budget");
-        if (budget !== undefined){
+        if (budget !== undefined) {
           return Number.parseInt(window.localStorage.getItem("budget"));
-        }else{
+        } else {
           return 0;
         }
       },
@@ -302,18 +302,18 @@ angular.module('starter.services', [])
           var uR = fb.child("users/" + fbAuth.uid);
           var syncArray = $firebaseArray(uR.child("pots/" + pot.potId));
 
-          var day  = "" + pot.date.getDate();
-          if (day.slice(1) == false){
+          var day = "" + pot.date.getDate();
+          if (day.slice(1) == false) {
             day = "0" + day;
           }
 
           var month = pot.date.getMonth() + 1;
           month = "" + month;
-          if (month.slice(1) == false){
+          if (month.slice(1) == false) {
             month = "0" + month;
           }
 
-          var year  = pot.date.getFullYear();
+          var year = pot.date.getFullYear();
           var newDate = year + month + day;
 
           syncArray.$add({

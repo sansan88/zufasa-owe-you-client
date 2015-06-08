@@ -30,10 +30,11 @@ angular.module('starter.controllers', [])
           var pots = data;
           var potItems = [];
           var date = new Date();
+          var spendings = {};
 
           var month = date.getMonth() + 1;
           month = "" + month;
-          if (month.slice(1) == false){
+          if (month.slice(1) == false) {
             month = "0" + month;
           }
 
@@ -46,9 +47,16 @@ angular.module('starter.controllers', [])
                   if (items[i].hasOwnProperty("isItem")) { // richtige position?
                     $scope.noPotItems++;
 
+                    //spendings this month
                     if (items[i].date.slice(4, 6) == month && items[i].date.slice(0, 4) == date.getFullYear()) {
                       $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + items[i].amount;
                     }
+
+                    //spendingsarray init
+                    if (!spendings[items[i].date.slice(0, 4) + items[i].date.slice(4, 6)]) {
+                      spendings[items[i].date.slice(0, 4) + items[i].date.slice(4, 6)] = 0;
+                    }
+                    spendings[items[i].date.slice(0, 4) + items[i].date.slice(4, 6)] = spendings[items[i].date.slice(0, 4) + items[i].date.slice(4, 6)] + items[i].amount;
                   }
                 } catch (err) {
                   console.log("no isItem property");
@@ -56,6 +64,45 @@ angular.module('starter.controllers', [])
               } //for
             }); //Get Ref from each pot
           };
+
+          $scope.spendings = spendings;
+          var chart = document.getElementById("myChart");
+          if (chart) {
+            var ctx = chart.getContext("2d");
+
+            var label = [];
+            var data = [];
+
+            for (var i = 0; i < $scope.spendings.length; i++) {
+              label.push($scope.spendings[i].key);
+              data.push($scope.spendings[i].value);
+            }
+
+            var data = {
+              labels: label,
+              datasets: [{
+                  label: "My spendings",
+                  fillColor: "rgba(220,220,220,0.5)",
+                  strokeColor: "rgba(220,220,220,0.8)",
+                  highlightFill: "rgba(220,220,220,0.75)",
+                  highlightStroke: "rgba(220,220,220,1)",
+                  data: data
+                }
+
+                /*, {
+                  label: "My Second dataset",
+                  fillColor: "rgba(151,187,205,0.5)",
+                  strokeColor: "rgba(151,187,205,0.8)",
+                  highlightFill: "rgba(151,187,205,0.75)",
+                  highlightStroke: "rgba(151,187,205,1)",
+                  data: [28, 48, 40, 19, 86, 27, 90]
+                }*/
+              ]
+            };
+            var myBarChart = new Chart(ctx).Bar(data);
+          }
+
+
         });
       } else {
         var message = {
@@ -67,29 +114,7 @@ angular.module('starter.controllers', [])
         $state.go('tab.account');
       }
 
-      var chart = document.getElementById("myChart");
-      if (chart) {
-        var ctx = chart.getContext("2d");
-        var data = {
-          labels: ["January", "February", "March", "April", "May", "June", "July"],
-          datasets: [{
-            label: "My First dataset",
-            fillColor: "rgba(220,220,220,0.5)",
-            strokeColor: "rgba(220,220,220,0.8)",
-            highlightFill: "rgba(220,220,220,0.75)",
-            highlightStroke: "rgba(220,220,220,1)",
-            data: [65, 59, 80, 81, 56, 55, 40]
-          }, {
-            label: "My Second dataset",
-            fillColor: "rgba(151,187,205,0.5)",
-            strokeColor: "rgba(151,187,205,0.8)",
-            highlightFill: "rgba(151,187,205,0.75)",
-            highlightStroke: "rgba(151,187,205,1)",
-            data: [28, 48, 40, 19, 86, 27, 90]
-          }]
-        };
-        var myBarChart = new Chart(ctx).Bar(data);
-      }
+
     };
 
     $scope.refresh = function() {
