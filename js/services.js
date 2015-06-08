@@ -31,8 +31,8 @@ angular.module('starter.services', [])
         window.localStorage.setItem("password", password);
       },
       setBudget: function(budget) {
-        if (!budget == undefined) {
-          Number.parseInt(window.localStorage.setItem("budget"), budget);
+        if (budget !== undefined) {
+          Number.parseInt(window.localStorage.setItem("budget", budget));
         }
       },
       setFirstname: function(firstname) {
@@ -40,6 +40,13 @@ angular.module('starter.services', [])
       },
       setName: function(name) {
         return window.localStorage.setItem("name", name);
+      },
+      setUser: function(user) {
+        this.setUsername(user.username);
+        this.setPassword(user.password);
+        this.setBudget(user.budget);
+        this.setName(user.name);
+        this.setFirstname(user.firstname);
       },
       getUsername: function() {
         return window.localStorage.getItem("username");
@@ -55,7 +62,7 @@ angular.module('starter.services', [])
       },
       getBudget: function() {
         var budget = window.localStorage.getItem("budget");
-        if (!budget == undefined){
+        if (budget !== undefined){
           return Number.parseInt(window.localStorage.getItem("budget"));
         }else{
           return 0;
@@ -71,14 +78,6 @@ angular.module('starter.services', [])
         };
         return user;
       },
-      setUser: function(user) {
-        this.setUsername(user.username);
-        this.setPassword(user.password);
-        this.setBudget(user.budget);
-        this.setName(user.name);
-        this.setFirstname(user.firstname);
-      },
-
       loginUser: function(username, password) {
         fb.onAuth(authDataCallback);
         if (username && password) {
@@ -302,9 +301,24 @@ angular.module('starter.services', [])
         if (fbAuth) {
           var uR = fb.child("users/" + fbAuth.uid);
           var syncArray = $firebaseArray(uR.child("pots/" + pot.potId));
+
+          var day  = "" + pot.date.getDate();
+          if (day.slice(1) == false){
+            day = "0" + day;
+          }
+
+          var month = pot.date.getMonth() + 1;
+          month = "" + month;
+          if (month.slice(1) == false){
+            month = "0" + month;
+          }
+
+          var year  = pot.date.getFullYear();
+          var newDate = year + month + day;
+
           syncArray.$add({
             'name': pot.name,
-            'date': pot.date.toString(),
+            'date': newDate,
             'amount': pot.amount,
             'isItem': true
           });

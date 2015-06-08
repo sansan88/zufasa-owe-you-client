@@ -29,16 +29,26 @@ angular.module('starter.controllers', [])
 
           var pots = data;
           var potItems = [];
+          var date = new Date();
+
+          var month = date.getMonth() + 1;
+          month = "" + month;
+          if (month.slice(1) == false){
+            month = "0" + month;
+          }
 
           //Loop über Alle Pots
           for (var i = 0; i < pots.length; i++) {
             //Position Data
-            Pots.getItemArray(pots[i].$id).then(function(items) {
+            Pots.getItemArray(pots[i].$id, fbAuth.uid).then(function(items) {
               for (var i = 0; i <= items.length; i++) {
                 try {
                   if (items[i].hasOwnProperty("isItem")) { // richtige position?
                     $scope.noPotItems++;
-                    $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + items[i].amount;
+
+                    if (items[i].date.slice(4, 6) == month && items[i].date.slice(0, 4) == date.getFullYear()) {
+                      $scope.totalSpendingsThisMonth = $scope.totalSpendingsThisMonth + items[i].amount;
+                    }
                   }
                 } catch (err) {
                   console.log("no isItem property");
@@ -261,6 +271,12 @@ angular.module('starter.controllers', [])
     if (fbAuth) {
       Pots.getItemObject($stateParams.potId, fbAuth.uid).then(function(data) {
         $scope.pot = data; //Kopfdaten
+        if (data.status === "archived") {
+          $scope.pot.statusClass = "badge badge-assertive";
+        } else {
+          $scope.pot.statusClass = "badge badge-balanced";
+          $scope.pot.status = "active"
+        }
       }); //Get Ref from each pot
 
       Pots.getItemArray($stateParams.potId, fbAuth.uid).then(function(data) {
@@ -291,6 +307,7 @@ angular.module('starter.controllers', [])
       showAlert(message);
       $state.go('tab.account');
     }
+
     /******************************************************/
     //  Modal Pot Item
     /******************************************************/
@@ -454,7 +471,8 @@ angular.module('starter.controllers', [])
           provider: authData.provider,
           username: User.getUsername(),
           name: User.getName(),
-          firstname: User.getFirstname()
+          firstname: User.getFirstname(),
+          budget: User.getBudget()
 
         });
       }
