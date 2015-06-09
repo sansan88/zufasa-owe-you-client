@@ -32,7 +32,7 @@ angular.module('starter.services', [])
       },
       setBudget: function(budget) {
         if (budget !== undefined) {
-          Number.parseInt(window.localStorage.setItem("budget", budget));
+          window.localStorage.setItem("budget", budget);
         }
       },
       setFirstname: function(firstname) {
@@ -63,7 +63,7 @@ angular.module('starter.services', [])
       getBudget: function() {
         var budget = 0;
         if (window.localStorage.getItem("budget") !== undefined) {
-          budget = Number.parseInt(window.localStorage.getItem("budget"));
+          budget = window.localStorage.getItem("budget");
         }
         return budget;
       },
