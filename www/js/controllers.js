@@ -180,6 +180,14 @@ angular.module('starter.controllers', [])
     if (fbAuth) {
       Pots.getAll(fbAuth.uid).then(function(data) {
         $scope.pots = data;
+
+        //FREE
+        if (data == false) {
+          var pot = {};
+          pot["name"] = "Free Pot";
+          pot["description"] = "First free pot";
+          Pots.add(pot);
+        }
       });
 
     } else {
@@ -201,6 +209,14 @@ angular.module('starter.controllers', [])
         Pots.getNew(fbAuth.uid).then(function(data) {
           $scope.pots = data;
           $scope.$broadcast('scroll.refreshComplete');
+          //FREE
+          if (data == false) {
+            var pot = {};
+            pot["name"] = "Free Pot";
+            pot["description"] = "First free pot";
+            Pots.add(pot);
+          }
+
         });
 
       } else {

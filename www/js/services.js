@@ -284,7 +284,7 @@ angular.module('starter.services', [])
         });
 
       },
-      add: function(pot) {
+      add: function(pot) { // pot = scope
         var fbAuth = fb.getAuth();
         if (fbAuth) {
           //var authData = JSON.parse(window.localStorage.getItem("authData"));
