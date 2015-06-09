@@ -61,12 +61,11 @@ angular.module('starter.services', [])
         return window.localStorage.getItem("password");
       },
       getBudget: function() {
-        var budget = window.localStorage.getItem("budget");
-        if (budget !== undefined) {
-          return window.localStorage.getItem("budget");
-        } else {
-          return 0;
+        var budget = 0;
+        if (window.localStorage.getItem("budget") !== undefined) {
+          budget = Number.parseInt(window.localStorage.getItem("budget"));
         }
+        return budget;
       },
       getUser: function() {
         var user = {

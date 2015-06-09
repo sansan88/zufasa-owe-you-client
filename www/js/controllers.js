@@ -435,45 +435,42 @@ angular.module('starter.controllers', [])
         subTitle: 'Please use normal things',
         scope: $scope,
         buttons: [{
-            text: 'Cancel'
-          }, {
-            text: '<b>Register new User</b>',
-            type: 'button-positive',
-            onTap: function(e) {
-              if (!$scope.register.password && !$scope.register.username) {
-                //don't allow the user to close unless he enters wifi password
-                e.preventDefault();
-              } else {
-                return $scope.register;
-              }
+          text: 'Cancel'
+        }, {
+          text: '<b>Register new User</b>',
+          type: 'button-positive',
+          onTap: function(e) {
+            if (!$scope.register.password && !$scope.register.username) {
+              //don't allow the user to close unless he enters wifi password
+              e.preventDefault();
+            } else {
+              return $scope.register;
             }
-          }]
-          //      });
-          //      myPopup.then(function(res) {
+          }
+        }]
       }).then(function(res) { //neu, für das oben
         if (res) {
           User.registerUser(res)
         };
       });
     };
-
     $scope.changeUserPassword = function() {
       var newPW = prompt("Set new password", "enter new password here");
-      User.changeUserPassword(User.getUser(), newPW);
+      if (newPW) {
+        User.changeUserPassword(User.getUser(), newPW);
+      }
     };
-
     $scope.changeUserEmail = function() {
       var newEmail = prompt("Set new email", "enter new email here");
-      User.changeUserEmail(User.getUser(), newEmail);
+      if (newEmail) {
+        User.changeUserEmail(User.getUser(), newEmail);
+      }
     };
-
     $scope.resetUserPW = function() {
       User.resetUserPW();
     };
-
     $scope.logoutUser = function() {
       User.logoutUser();
-      //clear Data in Scope
     };
 
     /*********************************************
@@ -588,16 +585,16 @@ angular.module('starter.controllers', [])
         },
         buttonClicked: function(index) {
           if (index === 0) {
-            $scope.saveUser();
+            $scope.setUser();
           }
           if (index === 1) {
-            $scope.changeEmail();
+            $scope.changeUserEmail();
           }
           if (index === 2) {
-            $scope.changePW();
+            $scope.changeUserPassword();
           }
           if (index === 3) {
-            $scope.resetPW();
+            $scope.resetUserPW();
           }
           return true;
         }
