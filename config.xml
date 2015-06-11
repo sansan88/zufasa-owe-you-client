@@ -9,6 +9,9 @@
     </author>
   <content src="index.html"/>
   <access origin="*"/>
+
+
+  <preference name="phonegap-version" value="3.7.0" />
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
@@ -68,4 +71,5 @@
     <splash src="resources/ios/splash/Default~iphone.png" width="320" height="480"/>
   </platform>
   <icon src="resources/ios/icon/icon-small@3x.png"/>
+  <gap:splash src="resources/ios/splash/splash.png" />
 </widget>
