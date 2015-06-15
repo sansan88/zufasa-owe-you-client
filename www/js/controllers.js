@@ -585,7 +585,7 @@ angular.module('starter.controllers', [])
         },
         buttonClicked: function(index) {
           if (index === 0) {
-            $scope.setUser();
+            $scope.saveUser();
           }
           if (index === 1) {
             $scope.changeUserEmail();
