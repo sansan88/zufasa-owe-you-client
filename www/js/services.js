@@ -64,7 +64,7 @@ angular.module('starter.services', [])
         var budget = 0;
         if (window.localStorage.getItem("budget") !== undefined) {
           budget = window.localStorage.getItem("budget");
-          budget = Number.parseInt(budget);
+          budget = Number.toInteger(budget);
         }
         return budget;
       },
