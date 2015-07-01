@@ -15,7 +15,6 @@ $assertive:                       #ef473a !default;
 $royal:                           #886aea !default;
 $dark:                            #444 !default;
 */
-ion-tab-background-color: #6D00D9;
 /*!
   Ionicons, v2.0.1
   Created by Ben Sperry for the Ionic Framework, http://ionicons.com/
@@ -7675,3 +7674,8 @@ a.button {
   opacity: 0;
   -webkit-transition-duration: 0s;
   transition-duration: 0s; }
+
+.scroll-bg {
+  background: url('http://img2.wikia.nocookie.net/__cb20141115021832/disney/images/thumb/5/5e/Mufasa.jpg/258px-Mufasa.jpg') no-repeat center center fixed;
+  background-size: cover;
+  opacity: 1; }

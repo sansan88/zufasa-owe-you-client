@@ -20,3 +20,11 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
+
+$big-bg:      'http://img2.wikia.nocookie.net/__cb20141115021832/disney/images/thumb/5/5e/Mufasa.jpg/258px-Mufasa.jpg';
+
+.scroll-bg {
+  background: url($big-bg) no-repeat center center fixed;
+  background-size: cover;
+  opacity: 1;
+}
