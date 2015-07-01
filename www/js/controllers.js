@@ -116,7 +116,7 @@ angular.module('starter.controllers', [])
 
 
     };
-
+    //Init
     $scope.refresh = function() {
         getData();
       }
@@ -172,7 +172,6 @@ angular.module('starter.controllers', [])
       });
     };
     //   ENDE
-
     /*******************************************************/
     //init
     /*******************************************************/
@@ -205,6 +204,7 @@ angular.module('starter.controllers', [])
     /*******************************************************/
     //Get Data from Store
     $scope.doRefresh = function() {
+      var fbAuth = fb.getAuth();
       if (fbAuth) {
         Pots.getNew(fbAuth.uid).then(function(data) {
           $scope.pots = data;
