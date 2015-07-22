@@ -12,9 +12,7 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content class="bg padding">
-
-
+  <ion-content class="bg">
     <div class="list">
       <div class="item item-icon-left">
         <i class="icon ion-clipboard"></i>Name
@@ -43,19 +41,12 @@
     <p>Changed from: {{pot.changer}} at {{pot.changedatetime}}</p>-->
 
 
-    <h3>Receipts</h3>
+    <h3 class="padding">Receipts</h3>
     <ion-list>
-      <ion-item class="item-remove-animate item-icon-right" ng-repeat="pot in pots">
-        <!--        <div class="card">
-          <div class="item item-divider">
-            {{item.name}}
-          </div>
-          <div class="item item-text-wrap">
-            <p>Date:   {{item.date}}</p>
-            <p>Amount: {{item.amount}}</p>
-          </div>
-        </div>-->
-
+      <ion-item class="item-remove-animate item-icon-right" href="#" type="item-text-wrap" ng-repeat="item in pot.items">
+        <h2>{{item.name}} {{item.description}}</h2>
+        <p>Date:   {{item.date}}</p>
+        <p>Amount: {{item.amount}}</p>
       </ion-item>
     </ion-list>
   </ion-content>
