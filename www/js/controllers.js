@@ -293,7 +293,7 @@ angular.module('starter.controllers', [])
 //****************************************************************************
 //  CONTROLLER POTS DETAIL
 //****************************************************************************
-.controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots, $firebaseArray, $firebaseObject, $ionicPopup) {
+.controller('PotDetailCtrl', function($scope, $ionicModal, $stateParams, Pots, $firebaseArray, $firebaseObject, $ionicPopup, $ionicListDelegate) {
     console.log("Pots Detail Ctrl");
     /*******************************************************/
     // Globale Funktionen pro controller               START
@@ -373,6 +373,11 @@ angular.module('starter.controllers', [])
         showAlert(title, template, logText);
       }
     };
+    $scope.remove = function(potId, potItem){
+      //Pots.setStatus(pot, 'removed');
+      Pots.removePotItem(potId, potItem);
+      $ionicListDelegate.closeOptionButtons();
+    }
     $scope.openModal = function() {
       $scope.modal.show();
     }

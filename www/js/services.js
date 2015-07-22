@@ -326,6 +326,13 @@ angular.module('starter.services', [])
           });
         }
       },
+      removePotItem: function(id, potItem){
+        var fbAuth = fb.getAuth();
+        if (fbAuth) {
+          var userReference = fb.child("users/" + fbAuth.uid + "/pots/" + id + "/" + potItem.$id);
+          userReference.remove();
+        }
+      },
       setStatus: function(pot, status) {
         var fbAuth = fb.getAuth();
         if (fbAuth) {
