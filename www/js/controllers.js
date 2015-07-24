@@ -101,6 +101,7 @@ angular.module('starter.controllers', [])
             };
             var myBarChart = new Chart(ctx).Bar(data);
           }
+          $scope.$apply();
 
 
         });
@@ -179,6 +180,7 @@ angular.module('starter.controllers', [])
     if (fbAuth) {
       Pots.getAll(fbAuth.uid).then(function(data) {
         $scope.pots = data;
+        $scope.$apply();
 
         //FREE
         if (data == false) {
@@ -209,6 +211,7 @@ angular.module('starter.controllers', [])
         Pots.getNew(fbAuth.uid).then(function(data) {
           $scope.pots = data;
           $scope.$broadcast('scroll.refreshComplete');
+          $scope.$apply();
           //FREE
           if (data == false) {
             var pot = {};
@@ -336,6 +339,8 @@ angular.module('starter.controllers', [])
           }
         } //for
 
+        $scope.$apply();
+
       });
 
 
@@ -373,7 +378,7 @@ angular.module('starter.controllers', [])
         showAlert(title, template, logText);
       }
     };
-    $scope.remove = function(potId, potItem){
+    $scope.remove = function(potId, potItem) {
       //Pots.setStatus(pot, 'removed');
       Pots.removePotItem(potId, potItem);
       $ionicListDelegate.closeOptionButtons();
