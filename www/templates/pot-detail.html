@@ -43,13 +43,15 @@
 
     <!--<h3 class="padding">Receipts</h3>-->
     <ion-list>
-      <ion-item class="item-remove-animate item-icon-right" href="#" type="item-text-wrap" ng-repeat="item in pot.items">
+      <ion-item class="item-remove-animate item-icon-right item-thumbnail-left" href="#" type="item-text-wrap" ng-repeat="item in pot.items">
         <ion-option-button class="button-assertive" ng-click="remove(pot.$id, item)">
           Delete
         </ion-option-button>
+        <img src="">
         <h2>{{item.name}} {{item.description}}</h2>
         <p>Date:   {{item.date}}</p>
         <p>Amount: {{item.amount}}</p>
+        <p>My Amount: {{item.split}}</p>
       </ion-item>
     </ion-list>
   </ion-content>
