@@ -322,6 +322,7 @@ angular.module('starter.services', [])
             'name': pot.name,
             'date': newDate,
             'amount': pot.amount,
+            'split' : pot.split,
             'isItem': true
           });
         }
